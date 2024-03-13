@@ -49,3 +49,18 @@ export const login = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({ status: true, message: "Logged in successfully!!" });
 });
+
+// Get all users For admin Panel
+export const getAllUsers = async () => {
+  try {
+    const data = await auth.find();
+    res.status(200).json({ status: true, data });
+  } catch (error) {
+    res
+      .status(400)
+      .json({
+        status: false,
+        message: error?.message || "Internal server error",
+      });
+  }
+};
