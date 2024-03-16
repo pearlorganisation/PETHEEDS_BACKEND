@@ -51,16 +51,22 @@ export const login = asyncHandler(async (req, res, next) => {
 });
 
 // Get all users For admin Panel
-export const getAllUsers = async () => {
+export const getAllUsers = async (req,res) => {
   try {
     const data = await auth.find();
     res.status(200).json({ status: true, data });
   } catch (error) {
-    res
-      .status(400)
-      .json({
-        status: false,
-        message: error?.message || "Internal server error",
-      });
+    res.status(400).json({
+      status: false,
+      message: error?.message || "Internal server error",
+    });
   }
 };
+
+// @desc - delete existing user
+// @route - DELETE api/v1/user/:id
+export const deleteUser = asyncHandler(async (req, res, next) => {
+    const isValidId = await auth.findByIdAndDelete(req?.params?.id);
+  if (!isValidId) return next(new errorResponse("No data found!!", 400));
+  res.status(200).json({ status: true, message: "Deleted successfully!!" });
+});

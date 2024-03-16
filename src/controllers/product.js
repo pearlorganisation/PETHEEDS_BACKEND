@@ -40,7 +40,7 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
   const data = await products.findByIdAndUpdate(id, {
     ...req?.body,
     gallery: req?.files?.gallery,
-    productImg: req?.files?.productImg[0] || existingData?.productImg,
+    productImg: Array.isArray(req?.files?.productImg) && req?.files?.productImg[0] || existingData?.productImg,
   });
   res
     .status(200)

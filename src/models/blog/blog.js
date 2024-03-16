@@ -5,7 +5,7 @@ const blogSchema = new mongoose.Schema(
     createdBy: {
       type: mongoose.Types.ObjectId,
       ref: "auth",
-      required: [true, "Created by field is required"],
+      required: [false, "Created by field is required"],
     },
     // category: {
     //   type: mongoose.Types.ObjectId,

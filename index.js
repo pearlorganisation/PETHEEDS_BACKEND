@@ -7,13 +7,13 @@ import connectDB from "./src/config/db.js";
 import { error } from "./src/middlewares/error.js";
 
 // @@Desc:-----Handling uncaught Exception-----------------
-process.on("uncaughtException", (err) => {
-  console.log(err);
-  console.log(`PETHEEDS-Error: ${err.message}`);
-  console.log(
-    `PETHEEDS-shutting down the server for handling uncaught exception`
-  );
-});
+// process.on("uncaughtException", (err) => {
+//   console.log(err);
+//   console.log(`PETHEEDS-Error: ${err.message}`);
+//   console.log(
+//     `PETHEEDS-shutting down the server for handling uncaught exception`
+//   );
+// });
 
 dotenv.config();
 const app = express();
@@ -55,6 +55,7 @@ import blogCategoryRoutes from "./src/routes/blog/blogCategory.js";
 import blogRoutes from "./src/routes/blog/blog.js";
 import subjectRoutes from "./src/routes/subject.js";
 import productsRoutes from "./src/routes/product.js";
+import appointmentRoutes from "./src/routes/appointment.js"
 
 // @@Desc:-----------------route section-----------------
 app.use("/api/v1/auth", authRoutes);
@@ -64,6 +65,7 @@ app.use("/api/v1/blogCategory", blogCategoryRoutes);
 app.use("/api/v1/blog", blogRoutes);
 app.use("/api/v1/product", productsRoutes);
 app.use("/api/v1/subject", subjectRoutes);
+app.use("/api/v1/appointment",appointmentRoutes)
 app.use("/", (req, res) => {
   res.send("--------WELCOME TO PETHEEDS---------");
 });
@@ -77,14 +79,14 @@ app.listen(PORT, () => {
 });
 
 // unhandled promise rejection
-process.on("unhandledRejection", (err) => {
-  console.log(err);
-  console.log(`PETHEEDS-Shutting down the server for ${err.message}`);
-  console.log(
-    `PETHEEDS-shutting down the server for unhandle promise rejection`
-  );
+// process.on("unhandledRejection", (err) => {
+//   console.log(err);
+//   console.log(`PETHEEDS-Shutting down the server for ${err.message}`);
+//   console.log(
+//     `PETHEEDS-shutting down the server for unhandle promise rejection`
+//   );
 
-  server.close(() => {
-    process.exit(1);
-  });
-});
+//   server.close(() => {
+//     process.exit(1);
+//   });
+// });
