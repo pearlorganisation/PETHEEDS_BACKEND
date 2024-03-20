@@ -2,16 +2,14 @@ import mongoose from "mongoose";
 
 export const authSchema = new mongoose.Schema(
   {
-    username: {
+    fullName: {
       type: String,
-      required: [true, "username is required!!"],
-
-      unique: [true, "This username is not available!!"],
+      required: [true, "Full name is required!!"],
     },
     email: {
       type: String,
       required: [true, "Email is required!!"],
-      unique: [true, "Email already exists!!"],
+      // unique: [true, "Email already exists!!"],
     },
     role: {
       type: String,

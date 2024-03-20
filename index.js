@@ -27,14 +27,15 @@ app.use(
   cors(
     process.env.NODE_ENV === "development"
       ? {
-          origin: ["http://localhost:5010"],
+          origin: ["http://localhost:5174"],
           credentials: true,
           methods: ["GET", "PUT", "POST", "PATCH", "DELETE"],
           allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
           exposedHeaders: ["*", "Authorization"],
         }
+        
       : {
-          origin: ["http://localhost:5010"],
+          origin: ["http://localhost:5174"],
           credentials: true,
           methods: ["GET", "PUT", "POST", "PATCH", "DELETE"],
           allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token"],

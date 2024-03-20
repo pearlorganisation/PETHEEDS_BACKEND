@@ -9,7 +9,12 @@ import { saveAccessTokenToCookie } from "../utils/other.js";
 // @desc -creating new user
 // @route - POST api/v1/auth/signup
 export const signup = asyncHandler(async (req, res, next) => {
-  const { password } = req?.body;
+  const { password, email } = req?.body;
+
+  const isDublicateEmail = await auth.findOne({ email });
+  if (!isDublicateEmail)
+    return next(new errorResponse("User already exists!", 400));
+  
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, 10);
   const newData = new auth({ ...req?.body, password: hashedPassword });
@@ -24,6 +29,7 @@ export const signup = asyncHandler(async (req, res, next) => {
 export const login = asyncHandler(async (req, res, next) => {
   const { username, email, password, type } = req?.body;
   const isDataExists = await auth.findOne({ $or: [{ email }, { username }] });
+
   if (!isDataExists) return next(new errorResponse("No user found!!", 400));
   if (type === "Admin" && isDataExists?.role != "Admin") {
     return next(
@@ -51,7 +57,7 @@ export const login = asyncHandler(async (req, res, next) => {
 });
 
 // Get all users For admin Panel
-export const getAllUsers = async (req,res) => {
+export const getAllUsers = async (req, res) => {
   try {
     const data = await auth.find();
     res.status(200).json({ status: true, data });
@@ -66,7 +72,7 @@ export const getAllUsers = async (req,res) => {
 // @desc - delete existing user
 // @route - DELETE api/v1/user/:id
 export const deleteUser = asyncHandler(async (req, res, next) => {
-    const isValidId = await auth.findByIdAndDelete(req?.params?.id);
+  const isValidId = await auth.findByIdAndDelete(req?.params?.id);
   if (!isValidId) return next(new errorResponse("No data found!!", 400));
   res.status(200).json({ status: true, message: "Deleted successfully!!" });
 });
