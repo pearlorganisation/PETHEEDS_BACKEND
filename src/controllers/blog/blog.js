@@ -5,7 +5,11 @@ import errorResponse from "../../utils/errorResponse.js";
 // @desc - new blog
 // @route - POST api/v1/blog
 export const newBlog = asyncHandler(async (req, res, next) => {
-  const newDoc = new blog({ ...req?.body, createdBy: req?.userId });
+  const newDoc = new blog({
+    ...req?.body,
+    createdBy: req?.userId,
+    banner: req?.file?.path,
+  });
   const data = await newDoc.save();
   res.status(201).json({ status: "true", message: "Created successfully!!" });
 });
