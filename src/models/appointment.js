@@ -10,6 +10,11 @@ const appointmentSchema = new mongoose.Schema(
       default: "Pending",
       enum: ["Pending", "Fullfilled"],
     },
+    phoneNumber:{
+      type: Number,
+      required: true,
+      
+    },
     email: {
       type: String,
       required: true,

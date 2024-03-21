@@ -12,7 +12,7 @@ export const signup = asyncHandler(async (req, res, next) => {
   const { password, email } = req?.body;
 
   const isDublicateEmail = await auth.findOne({ email });
-  if (!isDublicateEmail)
+  if (isDublicateEmail)
     return next(new errorResponse("User already exists!", 400));
   
   const salt = await bcrypt.genSalt(10);
