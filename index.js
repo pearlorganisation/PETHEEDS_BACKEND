@@ -27,15 +27,22 @@ app.use(
   cors(
     process.env.NODE_ENV === "development"
       ? {
-          origin: ["http://localhost:5173","http://localhost:5174","http://localhost:5010"],
+          origin: [
+            "http://localhost:5173",
+            "http://localhost:5174",
+            "http://localhost:5010",
+          ],
           credentials: true,
           methods: ["GET", "PUT", "POST", "PATCH", "DELETE"],
           allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
           exposedHeaders: ["*", "Authorization"],
         }
-        
       : {
-          origin: ["http://localhost:5173","http://localhost:5174","http://localhost:5010"],
+          origin: [
+            "http://localhost:5173",
+            "http://localhost:5174",
+            "http://localhost:5010",
+          ],
           credentials: true,
           methods: ["GET", "PUT", "POST", "PATCH", "DELETE"],
           allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
@@ -56,7 +63,7 @@ import blogCategoryRoutes from "./src/routes/blog/blogCategory.js";
 import blogRoutes from "./src/routes/blog/blog.js";
 import subjectRoutes from "./src/routes/subject.js";
 import productsRoutes from "./src/routes/product.js";
-import appointmentRoutes from "./src/routes/appointment.js"
+import appointmentRoutes from "./src/routes/appointment.js";
 
 // @@Desc:-----------------route section-----------------
 app.use("/api/v1/auth", authRoutes);
@@ -66,7 +73,7 @@ app.use("/api/v1/blogCategory", blogCategoryRoutes);
 app.use("/api/v1/blog", blogRoutes);
 app.use("/api/v1/product", productsRoutes);
 app.use("/api/v1/subject", subjectRoutes);
-app.use("/api/v1/appointment",appointmentRoutes)
+app.use("/api/v1/appointment", appointmentRoutes);
 app.use("/", (req, res) => {
   res.send("--------WELCOME TO PETHEEDS---------");
 });
