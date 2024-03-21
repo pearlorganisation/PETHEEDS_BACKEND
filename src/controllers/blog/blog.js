@@ -13,12 +13,11 @@ export const newBlog = asyncHandler(async (req, res, next) => {
 // @desc - get all blogs
 // @route - get api/v1/blogs
 export const getAllBlog = asyncHandler(async (req, res, next) => {
-  const data = await blog
-    .find()
-    // .populate("createdBy", ["username", "_id"])
-    // .populate("comments.createdBy", ["username", "_id"])
-    // .populate("category", ["category", "_id"]);
-
+  const data = await blog.find();
+  // .populate("createdBy", ["username", "_id"])
+  // .populate("comments.createdBy", ["username", "_id"])
+  // .populate("category", ["category", "_id"]);
+  console.log("hello");
   res.status(200).json({
     status: true,
     message:
@@ -43,4 +42,4 @@ export const deleteBlog = async (req, res) => {
       message: error?.message || "Internal server error",
     });
   }
-}
+};
