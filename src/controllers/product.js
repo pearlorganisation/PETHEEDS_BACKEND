@@ -40,9 +40,18 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
   const data = await products.findByIdAndUpdate(id, {
     ...req?.body,
     gallery: req?.files?.gallery,
-    productImg: Array.isArray(req?.files?.productImg) && req?.files?.productImg[0] || existingData?.productImg,
+    productImg:
+      (Array.isArray(req?.files?.productImg) && req?.files?.productImg[0]) ||
+      existingData?.productImg,
   });
   res
     .status(200)
     .json({ status: true, message: "Updated successfully!!", data });
+});
+
+// @desc - get particular product api
+// @route - GET api/v1/product/:id
+export const getParticularProduct = asyncHandler(async (req, res, next) => {
+  const data = await products.findById(req?.params?.id);
+  res.status(200).json({ status: true, data });
 });
