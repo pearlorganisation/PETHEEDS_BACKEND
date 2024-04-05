@@ -81,7 +81,6 @@ app.use("/", (req, res) => {
 });
 
 app.use(error);
-
 app.listen(PORT, () => {
   console.log(
     chalk.bgMagentaBright(`Server Started and Running at PORT ${PORT}`)

@@ -3,7 +3,7 @@ import errorResponse from "../utils/errorResponse.js";
 import banner from "../models/banner.js";
 
 export const newBanner = asyncHandler(async (req, res, next) => {
-  const bannerData = new banner({ banner: req?.file?.path });
+  const bannerData = new banner({ banner: req?.file?.path, ...req?.body });
   await bannerData.save();
 
   res
