@@ -1,4 +1,6 @@
 import express from "express";
+import { verifyTokenMiddleware } from "../middlewares/verifyToken.js";
+
 import {
   deleteSubject,
   getAllSubjects,
@@ -8,6 +10,6 @@ import {
 
 const router = express.Router();
 
-router.route("/").get(getAllSubjects).post(newSubject);
-router.route("/:id").delete(deleteSubject).patch(updateSubject);
+router.route("/").get(getAllSubjects).post(verifyTokenMiddleware,newSubject);
+router.route("/:id").delete(verifyTokenMiddleware,deleteSubject).patch(verifyTokenMiddleware,updateSubject);
 export default router;

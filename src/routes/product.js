@@ -1,6 +1,6 @@
 import express from "express";
 import { upload } from "../config/cloudinary.js";
-
+import { verifyTokenMiddleware } from "../middlewares/verifyToken.js";
 import {
   deleteProduct,
   getAllProducts,
@@ -12,15 +12,15 @@ const router = express.Router();
 router
   .route("/")
   .get(getAllProducts)
-  .post(
+  .post(verifyTokenMiddleware,
     upload.fields([{ name: "productImg" }, { name: "gallery" }]),
     newProduct
   );
 
 router
   .route("/:id")
-  .delete(deleteProduct)
-  .patch(
+  .delete(verifyTokenMiddleware,deleteProduct)
+  .patch(verifyTokenMiddleware,
     upload.fields([{ name: "productImg" }, { name: "gallery" }]),
     updateProduct
   );

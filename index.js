@@ -27,7 +27,7 @@ app.use(
   cors(
     process.env.NODE_ENV === "development"
       ? {
-          origin: ["http://localhost:5173","http://localhost:5174","http://localhost:5010"],
+          origin: ["http://localhost:5173","http://localhost:5174","http://localhost:5010","http://localhost:5011"],
           credentials: true,
           methods: ["GET", "PUT", "POST", "PATCH", "DELETE"],
           allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
@@ -35,7 +35,7 @@ app.use(
         }
         
       : {
-          origin: ["http://localhost:5173","http://localhost:5174","http://localhost:5010"],
+          origin: ["http://localhost:5173","http://localhost:5174","http://localhost:5010","http://localhost:5011"],
           credentials: true,
           methods: ["GET", "PUT", "POST", "PATCH", "DELETE"],
           allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
@@ -57,6 +57,7 @@ import blogRoutes from "./src/routes/blog/blog.js";
 import subjectRoutes from "./src/routes/subject.js";
 import productsRoutes from "./src/routes/product.js";
 import appointmentRoutes from "./src/routes/appointment.js"
+import mailRoutes from "./src/routes/mail.js"
 
 // @@Desc:-----------------route section-----------------
 app.use("/api/v1/auth", authRoutes);
@@ -67,6 +68,8 @@ app.use("/api/v1/blog", blogRoutes);
 app.use("/api/v1/product", productsRoutes);
 app.use("/api/v1/subject", subjectRoutes);
 app.use("/api/v1/appointment",appointmentRoutes)
+app.use("/api/v1/mail",mailRoutes)
+
 app.use("/", (req, res) => {
   res.send("--------WELCOME TO PETHEEDS---------");
 });
