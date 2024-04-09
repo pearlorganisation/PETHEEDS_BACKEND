@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { saveAccessTokenToCookie } from "../utils/other.js";
 
+
 // @desc -creating new user
 // @route - POST api/v1/auth/signup
 export const signup = asyncHandler(async (req, res, next) => {
@@ -27,8 +28,8 @@ export const signup = asyncHandler(async (req, res, next) => {
 // @desc -user login
 // @route - POST api/v1/auth/login
 export const login = asyncHandler(async (req, res, next) => {
-  const { username, email, password, type } = req?.body;
-  const isDataExists = await auth.findOne({ $or: [{ email }, { username }] });
+  const { fullName, email, password, type } = req?.body;
+  const isDataExists = await auth.findOne({ email });
 
   if (!isDataExists) return next(new errorResponse("No user found!!", 400));
   if (type === "Admin" && isDataExists?.role != "Admin") {
@@ -56,6 +57,25 @@ export const login = asyncHandler(async (req, res, next) => {
   res.status(200).json({ status: true, message: "Logged in successfully!!" });
 });
 
+// @desc -user logout
+// @route - POST api/v1/auth/logout
+
+export const logout = async (req, res) => {
+  try {
+    res.clearCookie("ACCESS_TOKEN_PETHEEDS");
+
+
+    res.status(200).json({
+      message: "Logged Out Successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: `Internal Server Error!${error.message}`,
+    });
+  }
+};
+
+
 // Get all users For admin Panel
 export const getAllUsers = async (req, res) => {
   try {
@@ -76,3 +96,46 @@ export const deleteUser = asyncHandler(async (req, res, next) => {
   if (!isValidId) return next(new errorResponse("No data found!!", 400));
   res.status(200).json({ status: true, message: "Deleted successfully!!" });
 });
+
+export const resetPassword = async(req,res)=>{
+  try {
+    
+      const { email, password, confirmPassword } = req.body;
+
+      const user = await auth.findOne({ email });
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Email does not exists" });
+    }
+
+
+    if (password !== confirmPassword) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Password does not match" });
+    }
+    
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await auth.findOneAndUpdate(
+      { email },
+      { password: hashedPassword },
+      { $new: true }
+    );
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Password Updated Successfully" });
+
+
+  } catch (error) {
+    
+    return res.status(500).json({
+      success: false,
+      message: `Internal Server Error! ${error.message}`,
+    });
+  }
+
+  }

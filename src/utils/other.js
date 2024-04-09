@@ -13,3 +13,9 @@ export const saveAccessTokenToCookie = (role, res, token) => {
     ...(process.env.NODE_ENV === "production" && { secure: true }),
   });
 };
+
+export const generateOtp = () => {
+  const otp = Math.floor(Math.random() * 900000 + 100000);
+  return otp;
+};
+

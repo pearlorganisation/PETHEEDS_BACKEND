@@ -5,16 +5,26 @@ import products from "../models/products.js";
 // @desc - new product
 // @route - POST api/v1/product
 export const newProduct = asyncHandler(async (req, res, next) => {
+
+  // const price = req.body.price || 0; // Ensure price is a number, default to 0 if not provided
+  // const discount = req.body.discount || 0; // Ensure discount is a number, default to 0 if not provided
+  // const totalPrice = price - discount; // Calculate total price
+
+  
   const newDoc = new products({
     productImg: req?.files?.productImg[0],
     gallery: req?.files?.gallery,
     ...req?.body,
   });
+  newDoc.totalPrice = newDoc.calculateTotalPrice()
+  
+  console.log(newDoc  ,"::newDoc")
   await newDoc.save();
   res
     .status(201)
-    .json({ status: true, message: "Created successfully!!", newProduct });
+    .json({ status: true, message: "Created successfully!!" });
 });
+
 
 // @desc - get all products
 // @route - POST api/v1/product
@@ -22,6 +32,7 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
   const data = await products.find();
   res.status(200).json({ status: true, data });
 });
+
 
 // @desc - delete existing product
 // @route - DELETE api/v1/product/:id
