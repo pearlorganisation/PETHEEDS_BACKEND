@@ -4,6 +4,7 @@ import { verifyTokenMiddleware } from "../middlewares/verifyToken.js";
 import {
   deleteProduct,
   getAllProducts,
+  getParticularProduct,
   newProduct,
   updateProduct,
 } from "../controllers/product.js";
@@ -23,5 +24,6 @@ router
   .patch(verifyTokenMiddleware,
     upload.fields([{ name: "productImg" }, { name: "gallery" }]),
     updateProduct
-  );
+  )
+  .get(getParticularProduct);
 export default router;

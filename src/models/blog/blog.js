@@ -7,20 +7,16 @@ const blogSchema = new mongoose.Schema(
       ref: "auth",
       required: [false, "Created by field is required"],
     },
-    // category: {
-    //   type: mongoose.Types.ObjectId,
-    //   ref: "blogCategory",
-    //   required: [true, "Blog category is required"],
-    // },
-    topic: { type: String, required: ["Topic is required!!"] },
-    subTopics: {
-      required: [true, "Sub topic is required!!"],
-      type: [{ subTopic: String, description: String }],
-    },
-    conclusion: {
+    banner: {
       type: String,
-      required: [true, "Conclusion is required!!"],
+      required: [true, "Banner image is required!!"],
     },
+    topic: { type: String, required: ["Topic is required!!"] },
+    description: {
+      type: String,
+      required: [true, "Blog description is required!!"],
+    },
+
     views: {
       count: { type: Number, default: 0 },
     },

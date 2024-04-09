@@ -40,7 +40,9 @@ export const deleteAppointment = async (req, res) => {
   try {
     const isValidId = await appointment.findByIdAndDelete(req?.params?.id);
     if (!isValidId) {
-      return res.status(404).json({ status: false, message: "appointment not found" });
+      return res
+        .status(404)
+        .json({ status: false, message: "appointment not found" });
     }
     res.status(200).json({ status: true, message: "Deleted successfully!!" });
   } catch (error) {
@@ -49,4 +51,4 @@ export const deleteAppointment = async (req, res) => {
       message: error?.message || "Internal server error",
     });
   }
-}
+};

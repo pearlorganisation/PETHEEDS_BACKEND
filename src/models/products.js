@@ -13,6 +13,15 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: [true, "Price is required!!"],
     },
+    discount: {
+      type: Number,
+      
+    },
+    totalPrice: {
+      type: Number,
+      virtual: true,
+      
+    },
 
     gallery: {
       type: [],
@@ -30,4 +39,7 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+productSchema.methods.calculateTotalPrice = function() {
+  return Math.round(this.price * (1 - this.discount / 100));
+};
 export default mongoose.model("product", productSchema);
