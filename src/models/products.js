@@ -9,18 +9,39 @@ const productSchema = new mongoose.Schema(
       type: {},
       required: [true, "Product image is required!!"],
     },
-    price: {
-      type: Number,
-      required: [true, "Price is required!!"],
-    },
+    price: [
+      {
+        weight: {
+          type: String,
+        },
+        price: {
+          type: Number,
+          
+        },
+        totalPrice:{
+          type:Number
+        }
+      }
+    ],
     discount: {
       type: Number,
       
     },
-    totalPrice: {
-      type: Number,
-      virtual: true,
+    newInStore:{
+      type:Boolean,
+    },
+    brand:{
+      type:String,
+      required:[true,"Brand name is required!!"]
+    },
+    // totalPrice: {
+    //   type: Number,
       
+    // },
+    category: {
+      type: mongoose.Types.ObjectId,
+      ref: "category",
+      required:true,
     },
 
     gallery: {
@@ -40,6 +61,9 @@ const productSchema = new mongoose.Schema(
 );
 
 productSchema.methods.calculateTotalPrice = function() {
-  return Math.round(this.price * (1 - this.discount / 100));
+  console.log(this,"this")
+  return this.price.map((item)=>{
+    return {...item,totalPrice:Math.round(item.price * (1 - this.discount / 100))}
+  });
 };
 export default mongoose.model("product", productSchema);

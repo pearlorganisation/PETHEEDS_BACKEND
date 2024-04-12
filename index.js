@@ -57,6 +57,8 @@ import subjectRoutes from "./src/routes/subject.js";
 import productsRoutes from "./src/routes/product.js";
 import appointmentRoutes from "./src/routes/appointment.js"
 import bannerRoutes from "./src/routes/banner.js"
+import categoryRoutes from "./src/routes/category.js"
+
 
 // @@Desc:-----------------route section-----------------
 app.use("/api/v1/auth", authRoutes);
@@ -66,8 +68,10 @@ app.use("/api/v1/blogCategory", blogCategoryRoutes);
 app.use("/api/v1/blog", blogRoutes);
 app.use("/api/v1/product", productsRoutes);
 app.use("/api/v1/banner", bannerRoutes);
+app.use("/api/v1/category",categoryRoutes);
 app.use("/api/v1/subject", subjectRoutes);
 app.use("/api/v1/appointment",appointmentRoutes)
+
 app.use("/", (req, res) => {
   res.send("--------WELCOME TO PETHEEDS---------");
 });
