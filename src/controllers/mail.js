@@ -41,7 +41,7 @@ try {
     .then(async () => {
         const otpDoc = await otpModel.findOneAndUpdate(
           { email },
-          { otp, expiresAt: new Date(Date.now() + 60000) },
+          { otp, expiresAt: new Date(Date.now() + 300000) },
           { $new: true }
         );
 
@@ -49,7 +49,7 @@ try {
             let doc = new otpModel({
               email,
               otp,
-              expiresAt: new Date(Date.now() + 60000), //expiry time of otp 60s
+              expiresAt: new Date(Date.now() + 300000), //expiry time of otp 5mins
             });
 
             doc.save().then(() => {
