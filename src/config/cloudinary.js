@@ -15,7 +15,7 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: "Petheeds",
-    allowed_formats: ["jpg", "png", "jpeg","webp"], // Allowed file formats
+    allowed_formats: ["jpg", "png", "jpeg","webp","avif"], // Allowed file formats
   },
 });
 

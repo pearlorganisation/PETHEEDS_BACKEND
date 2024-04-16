@@ -54,17 +54,16 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
     if(skip >= dataCount){
       return next(new errorResponse("No data found!!", 400));
     }
+    const data = await products.find(queryObj).populate("category").skip(skip).limit(limit)
+    res.status(200).json({ getStatus: true, length:data.length, data ,totalPages: Math.ceil(dataCount/2)});
+  } 
+  else {
+    const data = await products.find(queryObj).populate("category").skip(skip).limit(limit)
+    res.status(200).json({ getStatus: true, length: data.length, data });
   }
  
-  // const data = await products.find().populate("category")
-  // .where("brand")
-  // .equals(req.query.brand)
-  // .where("discount")
-  // .equals(req.query.discount)
 
-  const data = await products.find(queryObj).populate("category").skip(skip).limit(limit)
 
-  res.status(200).json({ status: true, length:data.length, data });
 });
 
 

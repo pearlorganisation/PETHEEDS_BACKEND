@@ -9,8 +9,7 @@ import { generateOtp } from "../utils/other.js";
 // @route - POST /mail/sendOtp
 // @access - PUBLIC
 
-export const sendOtp = async (req, res) => {
-try {
+export const sendOtp = async (req, res) => {try {
     
     const {email}= req.body
 
