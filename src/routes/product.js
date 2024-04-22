@@ -13,7 +13,7 @@ const router = express.Router();
 router
   .route("/")
   .get(getAllProducts)
-  .post(verifyTokenMiddleware,
+  .post(
     upload.fields([{ name: "productImg" }, { name: "gallery" }]),
     newProduct
   );

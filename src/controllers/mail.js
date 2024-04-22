@@ -25,13 +25,14 @@ export const sendOtp = async (req, res) => {try {
     // deleting the expired otp
     await otpModel.deleteMany({ expiresAt: { $lt: currentDate } });
 
-    const user = await auth.find({ email });
+    const user = await auth.findOne({ email });
 
     if (!user) {
         return res
           .status(400)
           .json({ success: false, message: "This mail does not exists" });
       }
+      
 
       // otp - generating random otp
     const otp = generateOtp();
