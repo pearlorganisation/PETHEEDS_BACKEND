@@ -34,10 +34,7 @@ const productSchema = new mongoose.Schema(
       type:String,
       required:[true,"Brand name is required!!"]
     },
-    // totalPrice: {
-    //   type: Number,
-      
-    // },
+  
     category: {
       type: mongoose.Types.ObjectId,
       ref: "category",

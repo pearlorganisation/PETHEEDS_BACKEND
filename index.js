@@ -58,12 +58,13 @@ import productsRoutes from "./src/routes/product.js";
 import appointmentRoutes from "./src/routes/appointment.js"
 import bannerRoutes from "./src/routes/banner.js"
 import categoryRoutes from "./src/routes/category.js"
-
+import mailRoutes from "./src/routes/mail.js"
 
 // @@Desc:-----------------route section-----------------
 app.use("/api/v1/auth", authRoutes);
 // app.use("/api/v1/subject", enquirySubjectRoutes);
 app.use("/api/v1/callbackRequest", requestCallbackRoutes);
+app.use("/api/v1/mail",mailRoutes)
 app.use("/api/v1/blogCategory", blogCategoryRoutes);
 app.use("/api/v1/blog", blogRoutes);
 app.use("/api/v1/product", productsRoutes);

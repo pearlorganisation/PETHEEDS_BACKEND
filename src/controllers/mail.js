@@ -9,8 +9,7 @@ import { generateOtp } from "../utils/other.js";
 // @route - POST /mail/sendOtp
 // @access - PUBLIC
 
-export const sendOtp = async (req, res) => {
-try {
+export const sendOtp = async (req, res) => {try {
     
     const {email}= req.body
 
@@ -26,13 +25,14 @@ try {
     // deleting the expired otp
     await otpModel.deleteMany({ expiresAt: { $lt: currentDate } });
 
-    const user = await auth.find({ email });
+    const user = await auth.findOne({ email });
 
     if (!user) {
         return res
           .status(400)
           .json({ success: false, message: "This mail does not exists" });
       }
+      
 
       // otp - generating random otp
     const otp = generateOtp();
@@ -41,7 +41,7 @@ try {
     .then(async () => {
         const otpDoc = await otpModel.findOneAndUpdate(
           { email },
-          { otp, expiresAt: new Date(Date.now() + 60000) },
+          { otp, expiresAt: new Date(Date.now() + 300000) },
           { $new: true }
         );
 
@@ -49,7 +49,7 @@ try {
             let doc = new otpModel({
               email,
               otp,
-              expiresAt: new Date(Date.now() + 60000), //expiry time of otp 60s
+              expiresAt: new Date(Date.now() + 300000), //expiry time of otp 5mins
             });
 
             doc.save().then(() => {

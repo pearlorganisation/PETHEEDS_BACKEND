@@ -11,11 +11,11 @@ export const authSchema = new mongoose.Schema(
       required: [true, "Email is required!!"],
 
     },
-    role: {
-      type: String,
-      enum: ["Admin", "User"],
-      default: "User",
-    },
+    // role: {
+    //   type: String,
+    //   enum: ["Admin", "User"],
+    //   default: "User",
+    // },
     password: {
       type: String,
       required: [true, "password is required!!"],

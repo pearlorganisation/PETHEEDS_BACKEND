@@ -9,7 +9,7 @@ const otpSchema = new mongoose.Schema(
       // required:[true,"Expiry Date of otp must be provided"]
     },
   },
-  { timestamps: true, expireAfterSeconds: 30 }
+  { timestamps: true, expireAfterSeconds: 300 } // 5minutes
 );
 
 // otpSchema.index({ expire_at: 1 }, { expireAfterSeconds: 2 });

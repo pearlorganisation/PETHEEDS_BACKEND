@@ -28,8 +28,42 @@ export const newProduct = asyncHandler(async (req, res, next) => {
 // @desc - get all products
 // @route - POST api/v1/product
 export const getAllProducts = asyncHandler(async (req, res, next) => {
-  const data = await products.find().populate("category");
-  res.status(200).json({ status: true, data });
+
+  const excludeFields = ['sort','page','limit','fields'];
+
+  const queryObj = {...req.query};
+
+  excludeFields.forEach((el)=>{
+    delete queryObj[el]
+  })
+
+  // console.log(req.query)
+  // console.log(queryObj)
+
+ 
+ 
+  // pagination
+  const page =  req.query.page*1 || 1;
+  const limit = req.query.limit*1 || 2;
+
+  // page 1 : 1-12; page 2 : 13-24; page 3 : 25-36
+  const skip = (page-1)* limit;
+
+  if (req.query.page){
+    const dataCount = await products.countDocuments();
+    if(skip >= dataCount){
+      return next(new errorResponse("No data found!!", 400));
+    }
+    const data = await products.find(queryObj).populate("category").skip(skip).limit(limit)
+    res.status(200).json({ getStatus: true, length:data.length, data ,totalPages: Math.ceil(dataCount/2)});
+  } 
+  else {
+    const data = await products.find(queryObj).populate("category").skip(skip).limit(limit)
+    res.status(200).json({ getStatus: true, length: data.length, data });
+  }
+ 
+
+
 });
 
 
@@ -45,10 +79,12 @@ export const deleteProduct = asyncHandler(async (req, res, next) => {
 // @route - PATCH api/v1/product/:id
 export const updateProduct = asyncHandler(async (req, res, next) => {
   const { id } = req?.params;
+  const {price,...rest} = req?.body
   const existingData = await products.findById(id);
   if (!existingData) return next(new errorResponse("No data found!!", 400));
   const data = await products.findByIdAndUpdate(id, {
-    ...req?.body,
+    ...rest,
+    price: JSON.parse(price),
     gallery: req?.files?.gallery,
     productImg:
       (Array.isArray(req?.files?.productImg) && req?.files?.productImg[0]) ||
