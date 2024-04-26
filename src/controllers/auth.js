@@ -2,22 +2,53 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import errorResponse from "../utils/errorResponse.js";
 import auth from "../models/auth.js";
 import jwt from "jsonwebtoken";
-
+import otpModel from "../models/otp.js";
 import bcrypt from "bcrypt";
-import { saveAccessTokenToCookie } from "../utils/other.js";
+import { generateOtp, saveAccessTokenToCookie } from "../utils/other.js";
+import { sendMail } from "../utils/sendMail.js";
 
 
 // @desc -creating new user
 // @route - POST api/v1/auth/signup
 export const signup = asyncHandler(async (req, res, next) => {
-  const { password, email } = req?.body;
+  const {email,password } = req?.body;
 
   const isDublicateEmail = await auth.findOne({ email });
   if (isDublicateEmail)
     return next(new errorResponse("User already exists!", 400));
   
+    // const otp = generateOtp();
+    //   // currentDate - holds the current date
+    //   const currentDate = new Date();
+
+    //   // deleting the expired otp
+    //   await otpModel.deleteMany({ expiresAt: { $lt: currentDate } },{
+    //     type:"SIGNUP"
+    //   });
+
+    //   sendMail(email,otp).then(
+    //     async()=>{
+    //       let doc = new otpModel({
+    //         email,
+    //         type:"SIGNUP",
+    //         otp,
+    //         expiresAt: new Date(Date.now() + 300000), //expiry time of otp 5mins
+    //       });
+
+    //       await doc.save()
+    //       return res
+    //               .status(200)
+    //               .json({ success: true, message: "OTP sent successfully" });
+    //     }
+    //   ).catch((error) => {
+    //    res.status(400).json({
+    //       success: false,
+    //       message: `Unable to send mail! ${error.message}`,
+    //     });
+    //   })
+
   const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await bcrypt.hash(password, salt);
   const newData = new auth({ ...req?.body, password: hashedPassword });
   const savedData = await newData.save();
   res
@@ -27,6 +58,8 @@ export const signup = asyncHandler(async (req, res, next) => {
 
 // @desc -user login
 // @route - POST api/v1/auth/login
+
+
 export const login = asyncHandler(async (req, res, next) => {
   const { fullName, email, password, type } = req?.body;
   const isDataExists = await auth.findOne({ email });
