@@ -9,6 +9,80 @@ import { generateOtp } from "../utils/other.js";
 // @route - POST /mail/sendOtp
 // @access - PUBLIC
 
+export const signupSendOtp = async (req, res) => {try {
+    
+    const {email}= req.body
+
+    if (!email) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Email is required" });
+      }
+
+       // currentDate - holds the current date
+    const currentDate = new Date();
+
+    // deleting the expired otp
+    await otpModel.deleteMany({ expiresAt: { $lt: currentDate } },{
+      type:"SIGNUP"
+    });
+
+    const user = await auth.findOne({ email });
+
+    if (user) {
+        return res
+          .status(400)
+          .json({ success: false, message: "User Already Exists!" });
+      }
+      
+
+      // otp - generating random otp
+    const otp = generateOtp();
+
+    sendMail(email,otp)
+    .then(async () => {
+        const otpDoc = await otpModel.findOneAndUpdate(
+          { email, type:"SIGNUP" },
+          { otp, expiresAt: new Date(Date.now() + 300000) },
+          { $new: true }
+        );
+
+        if (!otpDoc) {
+            let doc = new otpModel({
+              email,
+              type:"SIGNUP",
+              otp,
+              expiresAt: new Date(Date.now() + 300000), //expiry time of otp 5mins
+            });
+
+          await doc.save().then(() => {
+                return res
+                  .status(200)
+                  .json({ success: true, message: "OTP sent successfully" });
+              });
+            } else {
+                return res
+                  .status(200)
+                  .json({ success: true, message: "OTP sent successfully" });
+              }
+            })
+            .catch((error) => {
+              return res.status(400).json({
+                success: false,
+                message: `Unable to send mail! ${error.message}`,
+              });
+            });
+
+} catch (error) {
+
+    console.log(error.message);
+    return res.status(500).json({
+      success: false,
+      message: `Internal Server Error! ${error.message}`,
+    });
+  }
+    
+}
 export const sendOtp = async (req, res) => {try {
     
     const {email}= req.body
@@ -23,7 +97,9 @@ export const sendOtp = async (req, res) => {try {
     const currentDate = new Date();
 
     // deleting the expired otp
-    await otpModel.deleteMany({ expiresAt: { $lt: currentDate } });
+    await otpModel.deleteMany({ expiresAt: { $lt: currentDate } },{
+      type:"FORGOTPASSWORD"
+    });
 
     const user = await auth.findOne({ email });
 
@@ -40,7 +116,7 @@ export const sendOtp = async (req, res) => {try {
     sendMail(email,otp)
     .then(async () => {
         const otpDoc = await otpModel.findOneAndUpdate(
-          { email },
+          { email,type:"FORGOTPASSWORD" },
           { otp, expiresAt: new Date(Date.now() + 300000) },
           { $new: true }
         );
@@ -48,6 +124,7 @@ export const sendOtp = async (req, res) => {try {
         if (!otpDoc) {
             let doc = new otpModel({
               email,
+              type:"FORGOTPASSWORD",
               otp,
               expiresAt: new Date(Date.now() + 300000), //expiry time of otp 5mins
             });
@@ -83,13 +160,13 @@ export const sendOtp = async (req, res) => {try {
 
 export const verifyOtp = async(req,res)=>{
   try {
-    const {otp}=req.body;
+    const {otp,email}=req.body;
 
-  //   if(!email){
-  //     return res
-  //     .status(400)
-  //     .json({ success: false, message: "Bad Request! Email is required" });
-  // }
+    if(!email){
+      return res
+      .status(400)
+      .json({ success: false, message: "Bad Request! Email is required" });
+  }
 
   if(!otp){
     return res
@@ -97,7 +174,7 @@ export const verifyOtp = async(req,res)=>{
         .json({ success: false, message: "Bad Request! OTP is required" });
     }
     
-   const otpDoc =await otpModel.findOne({otp})
+   const otpDoc =await otpModel.findOne({otp,email})
 
     if(!otpDoc){
       return res
@@ -116,7 +193,7 @@ export const verifyOtp = async(req,res)=>{
     .json({ success: false, message: "OTP is expired" });
 }
 
-return res
+res
 .status(200)
 .json({ success: true, message: "OTP verified successfully" });
 
