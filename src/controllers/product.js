@@ -87,7 +87,8 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
     ...rest,
     price: JSON.parse(price),
     gallery: req?.files?.gallery,
-    productBanner: req?.files?.productBanner[0],
+    productBanner: (Array.isArray(req?.files?.productBanner) && req?.files?.productBanner[0]),
+
     productImg:
       (Array.isArray(req?.files?.productImg) && req?.files?.productImg[0]) ||
       existingData?.productImg,
