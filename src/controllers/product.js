@@ -7,7 +7,7 @@ import products from "../models/products.js";
 export const newProduct = asyncHandler(async (req, res, next) => {
 
 
-  console.log(JSON.parse(req?.body?.price))
+ 
   const {price,...rest} = req?.body
   const newDoc = new products({
     productImg: req?.files?.productImg[0],
@@ -18,7 +18,7 @@ export const newProduct = asyncHandler(async (req, res, next) => {
   });
    newDoc.price = newDoc.calculateTotalPrice()
   
-  // console.log(newDoc  ,"::newDoc")
+  
   await newDoc.save();
   res
     .status(201)
@@ -55,7 +55,7 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
     if(skip >= dataCount){
       return next(new errorResponse("No data found!!", 400));
     }
-    const data = await products.find(queryObj).populate("category").skip(skip).limit(limit)
+    const data = await products.find(queryObj).populate("category").populate("brand").skip(skip).limit(limit)
     res.status(200).json({ getStatus: true, length:data.length, data ,totalPages: Math.ceil(dataCount/2)});
   } 
   else {
@@ -87,7 +87,8 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
     ...rest,
     price: JSON.parse(price),
     gallery: req?.files?.gallery,
-    productBanner: req?.files?.productBanner[0],
+    productBanner: (Array.isArray(req?.files?.productBanner) && req?.files?.productBanner[0]),
+
     productImg:
       (Array.isArray(req?.files?.productImg) && req?.files?.productImg[0]) ||
       existingData?.productImg,
