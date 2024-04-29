@@ -9,6 +9,9 @@ const productSchema = new mongoose.Schema(
       type: {},
       required: [true, "Product image is required!!"],
     },
+    productBanner: {
+      type: {}
+    },
     price: [
       {
         weight: {

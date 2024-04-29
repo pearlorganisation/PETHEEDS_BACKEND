@@ -14,15 +14,15 @@ router
   .route("/")
   .get(getAllProducts)
   .post(
-    upload.fields([{ name: "productImg" }, { name: "gallery" }]),
+    upload.fields([{ name: "productImg" }, { name: "gallery" }, {name: "productBanner"}]),
     newProduct
   );
 
 router
   .route("/:id")
   .delete(verifyTokenMiddleware,deleteProduct)
-  .patch(verifyTokenMiddleware,
-    upload.fields([{ name: "productImg" }, { name: "gallery" }]),
+  .patch(
+    upload.fields([{ name: "productImg" }, { name: "gallery" }, {name: "productBanner"}]),
     updateProduct
   )
   .get(getParticularProduct);

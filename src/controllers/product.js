@@ -12,6 +12,7 @@ export const newProduct = asyncHandler(async (req, res, next) => {
   const newDoc = new products({
     productImg: req?.files?.productImg[0],
     gallery: req?.files?.gallery,
+    productBanner: req?.files?.productBanner[0],
     price: JSON.parse(price),
     ...rest,
   });
@@ -86,6 +87,7 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
     ...rest,
     price: JSON.parse(price),
     gallery: req?.files?.gallery,
+    productBanner: req?.files?.productBanner[0],
     productImg:
       (Array.isArray(req?.files?.productImg) && req?.files?.productImg[0]) ||
       existingData?.productImg,
