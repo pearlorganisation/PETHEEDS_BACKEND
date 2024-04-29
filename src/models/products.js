@@ -34,7 +34,8 @@ const productSchema = new mongoose.Schema(
       type:Boolean,
     },
     brand:{
-      type:String,
+      type:mongoose.Types.ObjectId,
+      ref:"brand",
       required:[true,"Brand name is required!!"]
     },
   
