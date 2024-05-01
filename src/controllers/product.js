@@ -59,7 +59,7 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
     res.status(200).json({ getStatus: true, length:data.length, data ,totalPages: Math.ceil(dataCount/2)});
   } 
   else {
-    const data = await products.find(queryObj).populate("category").skip(skip).limit(limit)
+    const data = await products.find(queryObj).populate("category").populate("brand")
     res.status(200).json({ getStatus: true, length: data.length, data });
   }
  
