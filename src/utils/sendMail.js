@@ -13,8 +13,8 @@ export const sendMail = async (email, otp) => {
       port: 465,
       service: "gmail",
       auth: {
-        user: 'avnish@pearlorganisation.com',
-        pass: 'gfskizvajvbhgaol',
+        user: process.env.NODEMAILER_EMAIL,
+        pass: process.env.NODEMAILER_APP_PASSWORD,
       },
     });
     const templatePath = path.join(__dirname, `../../views/forgotPassword.ejs`);
