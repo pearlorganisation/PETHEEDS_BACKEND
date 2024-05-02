@@ -27,14 +27,14 @@ app.use(
   cors(
     process.env.NODE_ENV === "development"
       ? {
-          origin: ["http://localhost:5173","http://localhost:5174","http://localhost:5010","https://petheeds-frontend.vercel.app"],
+          origin: ["http://localhost:5173","http://localhost:5174","http://localhost:5010","https://petheeds-frontend.vercel.app","https://petheeds-admin.vercel.app/"],
           credentials: true,
           methods: ["GET", "PUT", "POST", "PATCH", "DELETE"],
           allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
           exposedHeaders: ["*", "Authorization"],
         }
       : {
-          origin: ["http://localhost:5173","http://localhost:5174","http://localhost:5010","https://petheeds-frontend.vercel.app"],
+          origin: ["http://localhost:5173","http://localhost:5174","http://localhost:5010","https://petheeds-frontend.vercel.app","https://petheeds-admin.vercel.app/"],
           credentials: true,
           methods: ["GET", "PUT", "POST", "PATCH", "DELETE"],
           allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
