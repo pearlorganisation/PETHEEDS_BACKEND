@@ -21,7 +21,7 @@ export const getAllBlog = asyncHandler(async (req, res, next) => {
   // .populate("createdBy", ["username", "_id"])
   // .populate("comments.createdBy", ["username", "_id"])
   // .populate("category", ["category", "_id"]);
-  console.log("hello");
+  // console.log("hello");
   res.status(200).json({
     status: true,
     message:
