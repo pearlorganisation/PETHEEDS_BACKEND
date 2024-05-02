@@ -45,18 +45,19 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
  
   // pagination
   const page =  req.query.page*1 || 1;
-  const limit = req.query.limit*1 || 2;
+  const limit = req.query.limit*1 || 0;
 
   // page 1 : 1-12; page 2 : 13-24; page 3 : 25-36
   const skip = (page-1)* limit;
 
   if (req.query.page){
     const dataCount = await products.countDocuments();
+   
     if(skip >= dataCount){
       return next(new errorResponse("No data found!!", 400));
     }
     const data = await products.find(queryObj).populate("category").populate("brand").skip(skip).limit(limit)
-    res.status(200).json({ getStatus: true, length:data.length, data ,totalPages: Math.ceil(dataCount/2)});
+    res.status(200).json({ getStatus: true, length:data.length, data ,totalPages: Math.ceil(dataCount/limit)});
   } 
   else {
     const data = await products.find(queryObj).populate("category").populate("brand")
