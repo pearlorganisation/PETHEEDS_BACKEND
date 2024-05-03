@@ -3,13 +3,12 @@ import errorResponse from "../utils/errorResponse.js";
 import category from "../models/category.js";
 
 export const newCategory = asyncHandler(async(req,res,next)=>{
-console.log(req.body)
-console.log(JSON.parse(req?.body?.subTitle))
-const {subTitle,...rest} = req?.body
+// console.log(req.body)
+
+
     const categoryData =  new category({
         categoryImg:req?.file?.path,
-        subTitle: JSON.parse(subTitle),
-        ...rest
+        ...req?.body
     })
     await categoryData?.save();
 
@@ -34,4 +33,17 @@ export const deleteCategory = asyncHandler(async (req, res, next) => {
     if (!isValidId)
       return next(new errorResponse("No data found with given id!!"));
     res.status(200).json({ status: true, message: "Deleted successfully!!" });
+  });
+
+  export const updateCategory= asyncHandler(async (req, res, next) => {
+
+    const {id} =req?.params;
+    const isValidId = await category.findByIdAndUpdate(id,{
+        ...req?.body,
+        categoryImg: req?.file?.path
+    })
+
+    if(!isValidId)
+    return next(new errorResponse("No data found with given id!!"));
+    res.status(200).json({ status: true, message: "Updated successfully!!" });
   });
