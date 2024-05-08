@@ -2,10 +2,10 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import errorResponse from "../utils/errorResponse.js";
 import auth from "../models/auth.js";
 import jwt from "jsonwebtoken";
-import otpModel from "../models/otp.js";
+
 import bcrypt from "bcrypt";
-import { generateOtp, saveAccessTokenToCookie } from "../utils/other.js";
-import { sendMail } from "../utils/sendMail.js";
+import {saveAccessTokenToCookie } from "../utils/other.js";
+
 
 
 // @desc -creating new user
@@ -16,36 +16,7 @@ export const signup = asyncHandler(async (req, res, next) => {
   const isDublicateEmail = await auth.findOne({ email });
   if (isDublicateEmail)
     return next(new errorResponse("User already exists!", 400));
-  
-    // const otp = generateOtp();
-    //   // currentDate - holds the current date
-    //   const currentDate = new Date();
-
-    //   // deleting the expired otp
-    //   await otpModel.deleteMany({ expiresAt: { $lt: currentDate } },{
-    //     type:"SIGNUP"
-    //   });
-
-    //   sendMail(email,otp).then(
-    //     async()=>{
-    //       let doc = new otpModel({
-    //         email,
-    //         type:"SIGNUP",
-    //         otp,
-    //         expiresAt: new Date(Date.now() + 300000), //expiry time of otp 5mins
-    //       });
-
-    //       await doc.save()
-    //       return res
-    //               .status(200)
-    //               .json({ success: true, message: "OTP sent successfully" });
-    //     }
-    //   ).catch((error) => {
-    //    res.status(400).json({
-    //       success: false,
-    //       message: `Unable to send mail! ${error.message}`,
-    //     });
-    //   })
+ 
 
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
@@ -61,13 +32,13 @@ export const signup = asyncHandler(async (req, res, next) => {
 
 
 export const login = asyncHandler(async (req, res, next) => {
-  const { fullName, email, password, type } = req?.body;
+  const { email, password, type } = req?.body;
   const isDataExists = await auth.findOne({ email });
 
   if (!isDataExists) return next(new errorResponse("No user found!!", 400));
   if (type === "Admin" && isDataExists?.role != "Admin") {
     return next(
-      new errorResponse("Only admin can logg in in admin panel!!", 400)
+      new errorResponse("Only admin can log in this admin panel!!", 400)
     );
   }
 
