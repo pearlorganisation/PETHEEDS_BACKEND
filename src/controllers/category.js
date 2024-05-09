@@ -1,13 +1,14 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import errorResponse from "../utils/errorResponse.js";
 import category from "../models/category.js";
+import { cloudinary } from "../config/cloudinary.js";
 
 export const newCategory = asyncHandler(async(req,res,next)=>{
-// console.log(req.body)
+    const result = cloudinary.uploader.upload(categoryImg?.path)
 
 
     const categoryData =  new category({
-        categoryImg:req?.file?.path,
+        categoryImg: result?.secure_url,
         ...req?.body
     })
     await categoryData?.save();
@@ -36,11 +37,12 @@ export const deleteCategory = asyncHandler(async (req, res, next) => {
   });
 
   export const updateCategory= asyncHandler(async (req, res, next) => {
-
-    const {id} =req?.params;
+      const result = cloudinary.uploader.upload(categoryImg?.path)
+      const {id} =req?.params;
+    const existingData = await category.findById(id)
     const isValidId = await category.findByIdAndUpdate(id,{
         ...req?.body,
-        categoryImg: req?.file?.path
+        categoryImg: result?.secure_url || existingData?.categoryImg
     })
 
     if(!isValidId)

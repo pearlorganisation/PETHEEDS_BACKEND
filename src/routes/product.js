@@ -1,5 +1,5 @@
 import express from "express";
-import { upload } from "../config/cloudinary.js";
+import upload from "../middlewares/multer.js";
 import { verifyTokenMiddleware } from "../middlewares/verifyToken.js";
 import {
   deleteProduct,
@@ -20,7 +20,7 @@ router
 
 router
   .route("/:id")
-  .delete(verifyTokenMiddleware,deleteProduct)
+  .delete(deleteProduct)
   .patch(
     upload.fields([{ name: "productImg" }, { name: "gallery" }, {name: "productBanner"}]),
     updateProduct

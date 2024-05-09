@@ -5,7 +5,8 @@ import {
   newBanner,
   updateBanner,
 } from "../controllers/banner.js";
-import { upload } from "../config/cloudinary.js";
+import upload from "../middlewares/multer.js";
+
 const router = express.Router();
 
 router.route("/").get(getAllBanner).post(upload.single("banner"), newBanner);
