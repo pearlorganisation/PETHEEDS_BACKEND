@@ -5,9 +5,9 @@ const categorySchema = new mongoose.Schema({
         type:String,
          required:[true, "title is required for category"]
         },
-        subTitle:{
-            type:[],
-        },
+        // subTitle:{
+        //     type:[],
+        // },
         
     categoryImg:{
         type:{},

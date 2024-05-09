@@ -7,7 +7,6 @@ import errorResponse from "../../utils/errorResponse.js";
 export const newBlog = asyncHandler(async (req, res, next) => {
   const newDoc = new blog({
     ...req?.body,
-    createdBy: req?.userId,
     banner: req?.file?.path,
   });
   const data = await newDoc.save();
@@ -40,6 +39,27 @@ export const deleteBlog = async (req, res) => {
       return res.status(404).json({ status: false, message: "Blog not found" });
     }
     res.status(200).json({ status: true, message: "Deleted successfully!!" });
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: error?.message || "Internal server error",
+    });
+  }
+};
+
+export const updateBlog = async (req, res) => {
+  try {
+    const {id}= req?.params
+    const existingData= await blog.findById(id)
+    const isValidId = await blog.findByIdAndUpdate(id,{
+      ...req?.body,
+      banner: req?.file?.path || existingData?.banner
+    });
+    if (!isValidId) {
+      return res.status(404).json({ status: false, message: "Blog not found" });
+    }
+    res.status(200).json({ status: true, message: "Updated successfully!!" });
+
   } catch (error) {
     res.status(400).json({
       status: false,
