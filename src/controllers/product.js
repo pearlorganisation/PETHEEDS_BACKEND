@@ -1,18 +1,25 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import errorResponse from "../utils/errorResponse.js";
 import products from "../models/products.js";
+import { cloudinary } from "../config/cloudinary.js";
 
 // @desc - new product
 // @route - POST api/v1/product
 export const newProduct = asyncHandler(async (req, res, next) => {
 
+  const {productImg,gallery,productBanner} = req?.files
 
- 
+  // Upload files to Cloudinary
+  const productImgResult = await cloudinary.uploader.upload(productImg[0].path);
+  const productBannerResult = await cloudinary.uploader.upload(productBanner[0].path);
+  const galleryResults = await Promise.all(gallery.map(file => cloudinary.uploader.upload(file.path)));
+
+
   const {price,...rest} = req?.body
   const newDoc = new products({
-    productImg: req?.files?.productImg[0],
-    gallery: req?.files?.gallery,
-    productBanner: req?.files?.productBanner[0],
+    productImg: productImgResult?.secure_url,
+    gallery: galleryResults.map(result => result.secure_url),
+    productBanner: productBannerResult?.secure_url,
     price: JSON.parse(price),
     ...rest,
   });
@@ -80,6 +87,12 @@ export const deleteProduct = asyncHandler(async (req, res, next) => {
 // @desc - update existing product
 // @route - PATCH api/v1/product/:id
 export const updateProduct = asyncHandler(async (req, res, next) => {
+
+   // Upload files to Cloudinary
+   const productImgResult = await cloudinary.uploader.upload(productImg[0].path);
+   const productBannerResult = await cloudinary.uploader.upload(productBanner[0].path);
+   const galleryResults = await Promise.all(gallery.map(file => cloudinary.uploader.upload(file.path)));
+
   const { id } = req?.params;
   const {price,...rest} = req?.body
   const existingData = await products.findById(id);
@@ -87,11 +100,11 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
   const data = await products.findByIdAndUpdate(id, {
     ...rest,
     price: JSON.parse(price),
-    gallery: req?.files?.gallery,
-    productBanner: (Array.isArray(req?.files?.productBanner) && req?.files?.productBanner[0]),
+    gallery: galleryResults.map(result => result.secure_url),
+    productBanner: productImgResult?.secure_url,
 
     productImg:
-      (Array.isArray(req?.files?.productImg) && req?.files?.productImg[0]) ||
+    productImgResult?.secure_url ||
       existingData?.productImg,
   });
   res

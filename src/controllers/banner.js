@@ -1,10 +1,13 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import errorResponse from "../utils/errorResponse.js";
 import banner from "../models/banner.js";
+import { cloudinary } from "../config/cloudinary.js";
 
 export const newBanner = asyncHandler(async (req, res, next) => {
+  const result = cloudinary.uploader.upload(banner?.path)
+
   const bannerData = new banner({ 
-    banner: req?.file?.path,
+    banner: result,
     ...req?.body 
   });
   await bannerData.save();
@@ -25,10 +28,11 @@ export const deleteBanner = asyncHandler(async (req, res, next) => {
 });
 
 export const updateBanner = asyncHandler(async (req, res, next) => {
+  const result = cloudinary.uploader.upload(banner?.path)
   const {id} = req?.params
   const existingData = await banner.findById(id)
   const isValidId = await banner.findByIdAndUpdate(id,{
-    banner: req.file?.path || existingData?.banner,
+    banner: result || existingData?.banner,
     ...req?.body
   });
   if (!isValidId)

@@ -1,6 +1,6 @@
 import express from "express";
 
-import { upload } from "../config/cloudinary.js";
+import upload from "../middlewares/multer.js";
 import { deleteCategory, getAllCategory, newCategory, updateCategory } from "../controllers/category.js";
 const router = express.Router();
 
