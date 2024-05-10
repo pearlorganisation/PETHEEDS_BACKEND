@@ -1,13 +1,21 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import errorResponse from "../utils/errorResponse.js";
 import brand from "../models/brand.js";
+import { cloudinary } from "../config/cloudinary.js";
 
 // @desc - new brand category
 // @route - POST api/v1/brand
 export const newBrand = asyncHandler(async (req, res, next) => {
+  const brandBanner = req?.file
+  // console.log(brandBanner)
+  let result;
+
+  if(brandBanner){
+    result= await cloudinary.uploader.upload(brandBanner?.path)
+  }
   const newDoc = new brand({
     ...req?.body,
-    brandBanner: req?.files?.brandBanner[0],
+    brandBanner: result?.secure_url,
   });
 
   let data = await newDoc.save();
@@ -42,9 +50,15 @@ export const deleteBrand = asyncHandler(async (req, res, next) => {
 // @desc - update brand
 // @route - PATCH api/v1/brand/:id
 export const updateBrand = asyncHandler(async (req, res, next) => {
+  const brandBanner = req?.file
+let result;
+  if(brandBanner){
+  result = await cloudinary.uploader.upload(brandBanner?.path)
+  }
+
     const existingData = await brand.findById(req?.params?.id)
   const isValidId = await brand.findByIdAndUpdate(req?.params?.id, { ...req?.body,
-    brandBanner: (Array.isArray(req?.files?.brandBanner) && req?.files?.brandBanner[0]) || existingData?.brandBanner
+    brandBanner: result?.secure_url || existingData?.brandBanner
 
 });
   if (!isValidId)
