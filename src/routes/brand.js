@@ -10,7 +10,7 @@ router
   .route("/")
   .get(getAllBrands)
   .post(
-    upload.fields([{ name: "brandBanner" }]),
+    upload.single("brandBanner"),
     newBrand
   );
 
@@ -18,7 +18,7 @@ router
   .route("/:id")
   .delete(deleteBrand)
   .patch(
-    upload.fields([{ name: "brandBanner" }]),
+    upload.single("brandBanner"),
     updateBrand
   )
   

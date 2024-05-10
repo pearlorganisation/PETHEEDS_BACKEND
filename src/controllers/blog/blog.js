@@ -6,12 +6,13 @@ import errorResponse from "../../utils/errorResponse.js";
 // @desc - new blog
 // @route - POST api/v1/blog
 export const newBlog = asyncHandler(async (req, res, next) => {
-  const {banner} = req?.file
-  const result = cloudinary.uploader.upload(banner?.path)
-
+  const banner = req?.file;
+  // console.log(banner);
+  const result = await cloudinary.uploader.upload(banner?.path);
+  // console.log(result);
   const newDoc = new blog({
     ...req?.body,
-    banner: result?.secure_url
+    banner: result?.secure_url,
   });
   const data = await newDoc.save();
   res.status(201).json({ status: "true", message: "Created successfully!!" });
@@ -52,20 +53,24 @@ export const deleteBlog = async (req, res) => {
 };
 
 export const updateBlog = async (req, res) => {
-  const result = cloudinary.uploader.upload(banner?.path)
-  
+  const banner = req?.file
+// console.log(banner)
+  let result;
+  if(banner){
+  result = await cloudinary.uploader.upload(banner?.path);
+  }
+
   try {
-    const {id}= req?.params
-    const existingData= await blog.findById(id)
-    const isValidId = await blog.findByIdAndUpdate(id,{
+    const { id } = req?.params;
+    const existingData = await blog.findById(id);
+    const isValidId = await blog.findByIdAndUpdate(id, {
       ...req?.body,
-      banner: result?.secure_url || existingData?.banner
+      banner: result?.secure_url || existingData?.banner,
     });
     if (!isValidId) {
       return res.status(404).json({ status: false, message: "Blog not found" });
     }
     res.status(200).json({ status: true, message: "Updated successfully!!" });
-
   } catch (error) {
     res.status(400).json({
       status: false,
