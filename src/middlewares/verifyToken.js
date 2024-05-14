@@ -1,5 +1,5 @@
 import jsonwebtoken from "jsonwebtoken";
-import chalk from "chalk";
+
 const jwt = jsonwebtoken;
 
 export const verifyTokenMiddleware = async (req, res, next) => {
@@ -12,7 +12,7 @@ export const verifyTokenMiddleware = async (req, res, next) => {
     if (access_token === null) {
       return res.status(403).json({
         success: false,
-        message: "Unauthorized! Please Check Your Login Credentials1",
+        message: "Unauthorized Access! Please Login !",
       });
     }
 
@@ -25,7 +25,7 @@ export const verifyTokenMiddleware = async (req, res, next) => {
           if (error) {
             return res.status(403).json({
               success: false,
-              message: `Unauthorized! Please Check Your Login Credentials-${error}`,
+              message: `Unauthorized Access ! Please Login !`,
             });
           }
 
