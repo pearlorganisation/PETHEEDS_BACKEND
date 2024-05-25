@@ -60,6 +60,7 @@ import bannerRoutes from "./src/routes/banner.js"
 import categoryRoutes from "./src/routes/category.js"
 import mailRoutes from "./src/routes/mail.js"
 import brandRoutes from "./src/routes/brand.js"
+import bookingRoutes from "./src/routes/booking.js"
 
 
 // @@Desc:-----------------route section-----------------
@@ -75,6 +76,7 @@ app.use("/api/v1/category",categoryRoutes);
 app.use("/api/v1/subject", subjectRoutes);
 app.use("/api/v1/appointment",appointmentRoutes)
 app.use("/api/v1/brand", brandRoutes)
+app.use("/api/v1/booking", bookingRoutes)
 
 
 app.use("/", (req, res) => {
