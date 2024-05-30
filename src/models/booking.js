@@ -1,26 +1,32 @@
 import mongoose from "mongoose";
 
 const bookingSchema = new mongoose.Schema({
-    bookingId: {
-        type: mongoose.Types.ObjectId ,
-      
-      },
-    amount:{
-        type:String,
-        required:true
-    },
-    isBookedSuccessfully: {
-        type:Boolean,
-        default: false,
-    },
+  amount: {
+    type: String,
+    required: true,
+  },
+  orderById: {
+    type: mongoose.Types.ObjectId,
+    required: [true, "order by is required field!!"],
+    ref: "auth",
+  },
+  productId: {
+    type: [mongoose.Types.ObjectId],
+    required: [true, "Product id required!!"],
+    ref: "product",
+  },
 
-    razorpay_payment_id: {
-        type: String,
-      },
-      razorpay_order_id: {
-        type: String,
-      },
+  isBookedSuccessfully: {
+    type: Boolean,
+    default: false,
+  },
 
+  razorpay_payment_id: {
+    type: String,
+  },
+  razorpay_order_id: {
+    type: String,
+  },
 });
 
 export default mongoose.model("booking", bookingSchema);
