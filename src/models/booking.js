@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+
 const bookingSchema = new mongoose.Schema({
   amount: {
     type: String,
@@ -10,11 +11,15 @@ const bookingSchema = new mongoose.Schema({
     required: [true, "order by is required field!!"],
     ref: "auth",
   },
-  productId: {
-    type: [mongoose.Types.ObjectId],
-    required: [true, "Product id required!!"],
-    ref: "product",
-  },
+paymentType:{
+  type:String,
+  enum:["Cash on Delivery","Online Paid"],
+  required:true,
+  default: "Cash on Delivery"
+},
+
+  productId: [
+    { type: mongoose.Types.ObjectId, ref: 'product' }],
 
   isBookedSuccessfully: {
     type: Boolean,

@@ -8,11 +8,11 @@ import crypto from "crypto";
 // @route - POST api/v1/booking/bookingOrder
 
 export const bookingOrder = asyncHandler(async (req, res, next) => {
-  console.log(req?.body)
   const newBooking = await booking.create({
     amount: req?.body?.amount,
     productId: req?.body?.productId,
-    orderById: req?.body?.orderById
+    orderById: req?.body?.orderById,
+    paymentType: "Online Paid",
   });
 
   const options = {
@@ -40,26 +40,26 @@ export const bookingOrder = asyncHandler(async (req, res, next) => {
 
 //Get all bookings
 
-export const getAllBookings = async (req, res, next) => {
-  const data = await booking.find();
-  await booking.deleteMany({isBookedSuccessfully:false})
+export const getAllBookings = asyncHandler(async (req, res, next) => {
+  const data = await booking
+    .find()
+    .populate("productId.price")
+    .populate("orderById");
+
+  await booking.deleteMany({ isBookedSuccessfully: false });
 
   res.status(200).json({ status: true, data });
-};
+});
 
 // @desc - verifying razorpay order api
 // @route - POST api/v1/booking/verifyOrder
 
 export const verifyOrder = asyncHandler(async (req, res) => {
   try {
-    console.log(req?.params, "paramsss");
-
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
       await req.body;
     console.log(razorpay_order_id, "razorpay_order_id");
     const body = razorpay_order_id + "|" + razorpay_payment_id;
-
- 
 
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
@@ -83,6 +83,10 @@ export const verifyOrder = asyncHandler(async (req, res) => {
       status: true,
       message: "Payment verified successfully!!",
     });
+
+
+
+    
   } catch (e) {
     return res
       .status(400)
@@ -92,14 +96,17 @@ export const verifyOrder = asyncHandler(async (req, res) => {
 
 // @create booking for CASH ON DELIVERY
 
-export const createCodOrder = asyncHandler(async(req,res,next)=>{
+export const createCodOrder = asyncHandler(async (req, res, next) => {
+  const { amount, orderById, productId } = req?.body;
 
-  const {amount ,orderById, productId}= req?.body
+  const newBooking = await booking.create({
+    amount,
+    orderById,
+    productId,
+    isBookedSuccessfully: true,
+  });
 
-const newBooking = await booking.create({
-  amount ,orderById, productId
-  ,isBookedSuccessfully:true
-})
-
-res.status(201).json({ status: true, message: "New Order created successfully!!" , });
-})
+  res
+    .status(201)
+    .json({ status: true, message: "New Order created successfully!!" });
+});

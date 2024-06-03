@@ -61,6 +61,7 @@ import categoryRoutes from "./src/routes/category.js"
 import mailRoutes from "./src/routes/mail.js"
 import brandRoutes from "./src/routes/brand.js"
 import bookingRoutes from "./src/routes/booking.js"
+import addressRoutes from "./src/routes/address.js"
 
 
 // @@Desc:-----------------route section-----------------
@@ -77,6 +78,7 @@ app.use("/api/v1/subject", subjectRoutes);
 app.use("/api/v1/appointment",appointmentRoutes)
 app.use("/api/v1/brand", brandRoutes)
 app.use("/api/v1/booking", bookingRoutes)
+app.use("/api/v1/address", addressRoutes)
 
 
 app.use("/", (req, res) => {
