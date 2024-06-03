@@ -24,6 +24,10 @@ export const authSchema = new mongoose.Schema(
       type: Number,
       //   required: [true, "Number already exists!!"],
     },
+    Address: {
+      type: Number,
+      //   required: [true, "Number already exists!!"],
+    },
   },
   { timestamps: true }
 );

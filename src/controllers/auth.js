@@ -58,7 +58,7 @@ export const login = asyncHandler(async (req, res, next) => {
 
   saveAccessTokenToCookie(isDataExists?.role, res, accessToken);
 
-  res.status(200).json({ status: true, message: "Logged in successfully!!" });
+  res.status(200).json({ status: true, data:isDataExists, message: "Logged in successfully!!" });
 });
 
 // @desc -user logout
