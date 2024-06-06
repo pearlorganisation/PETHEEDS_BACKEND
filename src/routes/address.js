@@ -1,11 +1,11 @@
 import express from "express";
-import { newAddress } from "../controllers/address.js";
+import { getAllAddresses, newAddress } from "../controllers/address.js";
 
 import { verifyTokenMiddleware } from "../middlewares/verifyToken.js";
 
 
 const router = express.Router();
 
-router.route("/").post(newAddress)
+router.route("/").get(getAllAddresses).post(newAddress)
 
 export default router;

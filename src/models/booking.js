@@ -11,6 +11,10 @@ const bookingSchema = new mongoose.Schema({
     required: [true, "order by is required field!!"],
     ref: "auth",
   },
+  email:{
+    type:String,
+    required:[true,"Email required "]
+  },
 paymentType:{
   type:String,
   enum:["Cash on Delivery","Online Paid"],
@@ -32,6 +36,6 @@ paymentType:{
   razorpay_order_id: {
     type: String,
   },
-});
+},{timestamps:true});
 
 export default mongoose.model("booking", bookingSchema);

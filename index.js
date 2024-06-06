@@ -79,13 +79,13 @@ app.use("/api/v1/appointment",appointmentRoutes)
 app.use("/api/v1/brand", brandRoutes)
 app.use("/api/v1/booking", bookingRoutes)
 app.use("/api/v1/address", addressRoutes)
+app.use(error);
 
 
 app.use("/", (req, res) => {
   res.send("--------WELCOME TO PETHEEDS---------");
 });
 
-app.use(error);
 app.listen(PORT, () => {
   console.log(
     chalk.bgMagentaBright(`Server Started and Running at PORT ${PORT}`)
