@@ -26,3 +26,18 @@ const data = await address.find()
     .status(200)
     .json({ status: true, message: "Addresses data found successfully!!", data });
 });
+
+//Get Particular User adderess
+
+export const getParticularUserAddress= asyncHandler(async(req,res,next)=>{
+   
+  const {id} = req?.params
+  
+    const data = await address.find({userId:id})
+  
+    if (!data)
+      return next(new errorResponse("No data found with given id!!"));
+  
+    res.status(200).json({status:true, message: data?.length >= 1 ? "Data found successfully!" : "No data found!!", data})
+  
+  })
