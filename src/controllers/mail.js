@@ -208,7 +208,7 @@ export const verifyOtp = async (req, res) => {
 
 export const OrderMail = asyncHandler(async (req, res, next) => {
   const { id } = req?.params;
-  console.log(req?.body);
+ 
   const { paymentType, createdAt, amount, email } = req?.body;
 
   // date conversion of createdAt
