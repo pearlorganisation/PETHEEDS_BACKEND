@@ -17,7 +17,7 @@ export const bookingOrder = asyncHandler(async (req, res, next) => {
     paymentType: "Online Paid",
     address: req?.body?.address,
   });
-console.log(req?.body)
+
   const options = {
     amount: Number(req?.body?.amount * 100),
     currency: "INR",
@@ -58,7 +58,7 @@ export const getAllBookings = asyncHandler(async (req, res, next) => {
 //Get Particular User bookings
 
 export const getParticularUserBookings= asyncHandler(async(req,res,next)=>{
-   
+  await booking.deleteMany({ isBookedSuccessfully: false });
 const {id} = req?.params
 
   const data = await booking.find({orderById:id}).populate("product.productId").populate("address")

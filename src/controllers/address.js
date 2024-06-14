@@ -17,6 +17,36 @@ export const newAddress = asyncHandler(async (req, res, next) => {
     .json({ status: true, message: "Address created successfully!!", data });
 });
 
+// @desc - Update address 
+// @route - PATCH api/v1/address
+export const updateAddress = asyncHandler(async (req, res, next) => {
+
+  const {id} =req?.params
+
+  const isValidId = await address.findByIdAndUpdate(id,req?.body);
+ if(!isValidId){
+  return next ( new errorResponse("Id is not valid to update the address",400))
+ }
+  res
+    .status(200)
+    .json({ status: true, message: "Address updated successfully!!" });
+});
+
+// @desc - Delete address 
+// @route - DELETE api/v1/address
+export const deleteAddress = asyncHandler(async (req, res, next) => {
+
+  const {id} =req?.params
+
+  const isValidId = await address.findByIdAndDelete(id);
+ if(!isValidId){
+  return next ( new errorResponse("Id is not valid to delete the address",400))
+ }
+  res
+    .status(200)
+    .json({ status: true, message: "Address Deleted successfully!!" });
+});
+
 // @desc - get address 
 // @route - GET api/v1/address
 export const getAllAddresses = asyncHandler(async (req, res, next) => {
