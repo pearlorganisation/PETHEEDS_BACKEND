@@ -13,9 +13,12 @@ const callbackRequestSchema = new mongoose.Schema(
       type: String,
       required: ["Message field is required!!"],
     },
+    number: {
+      type: Number,
+      required: ["Message field is required!!"],
+    },
     subject: {
-      type: mongoose.Types.ObjectId,
-      ref: "enquirySubject",
+      type: String,
       required: [true, "Enquiry subject is required!!"],
     },
   },
