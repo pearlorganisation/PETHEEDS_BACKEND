@@ -117,7 +117,7 @@ export const createCodOrder = asyncHandler(async (req, res, next) => {
   try {
     const { amount, orderById, product, email,address } = req?.body;
 
-
+console.log(req?.body)
     const newBooking = await booking.create({
       amount,
       orderById,

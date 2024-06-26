@@ -15,9 +15,7 @@ export const newCallBackRequest = asyncHandler(async (req, res, next) => {
 // @desc - get all calllback
 // @route - GET api/v1/callbackRequest
 export const getAllCallbackRequests = asyncHandler(async (req, res) => {
-  const data = await callbackRequest
-    .find()
-    .populate("subject", ["subject", "_id"]);
+  const data = await callbackRequest.find()
 
   res.status(200).json({
     status: true,

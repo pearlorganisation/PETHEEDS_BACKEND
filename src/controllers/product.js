@@ -42,7 +42,6 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
     delete queryObj[el];
   });
 
-  // console.log(req.query)
   // console.log(queryObj)
 
   // pagination
@@ -127,11 +126,12 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
     gallery:
       Array.isArray(galleryResults) &&
       galleryResults?.length > 0 &&
-      galleryResults?.map((result) => result?.secure_url),
+      galleryResults?.map((result) => result?.secure_url) || existingData?.gallery,
     productBanner: productBannerResult?.secure_url || existingData?.productBanner,
 
     productImg: productImgResult?.secure_url || existingData?.productImg,
   });
+ 
   res
     .status(200)
     .json({ status: true, message: "Updated successfully!!", data });
