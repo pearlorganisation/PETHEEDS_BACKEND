@@ -32,6 +32,7 @@ const productSchema = new mongoose.Schema(
     },
     newInStore:{
       type:Boolean,
+      default:false
     },
     brand:{
       type:mongoose.Types.ObjectId,
@@ -62,9 +63,9 @@ const productSchema = new mongoose.Schema(
 );
 
 productSchema.methods.calculateTotalPrice = function() {
-  console.log(this,"this")
+  // console.log(this,"this")
   return this.price.map((item)=>{
-    return {...item,totalPrice:Math.round(item.price * (1 - this.discount / 100))}
+    return {...item,totalPrice:Math.round(item.price * (1 - (this.discount || 0)/ 100))}
   });
 };
 export default mongoose.model("product", productSchema);

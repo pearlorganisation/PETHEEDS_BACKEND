@@ -6,13 +6,15 @@ import { cloudinary } from "../config/cloudinary.js";
 // @desc - new product
 // @route - POST api/v1/product
 export const newProduct = asyncHandler(async (req, res, next) => {
+ 
   const { productImg, gallery, productBanner } = req?.files;
-
   // Upload files to Cloudinary
   const productImgResult = await cloudinary.uploader.upload(productImg[0].path);
-  const productBannerResult = await cloudinary.uploader.upload(
+ if(productBanner)
+  { var productBannerResult = await cloudinary.uploader.upload(
     productBanner[0].path
-  );
+  );}
+
   const galleryResults = await Promise.all(
     gallery.map((file) => cloudinary.uploader.upload(file.path))
   );
@@ -90,11 +92,10 @@ export const deleteProduct = asyncHandler(async (req, res, next) => {
 // @route - PATCH api/v1/product/:id
 export const updateProduct = asyncHandler(async (req, res, next) => {
   let { productImg, gallery, productBanner } = req?.files;
- 
   let productImgResult;
 
   if (productImg) {
-    productImgResult = await  cloudinary.uploader.upload(
+    productImgResult = await cloudinary.uploader.upload(
       Array.isArray(productImg) && productImg.length > 0
         ? productImg[0].path
         : ""
@@ -109,33 +110,45 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
         : ""
     );
   }
-  // console.log("2");
-  const galleryResults = await Promise.all(
-    gallery?.map((file) => cloudinary.uploader.upload(file.path)) || []
-  );
 
-  // console.log("3");
+  if (gallery) {
+    var galleryResults = await Promise.all(
+      gallery?.map((file) => cloudinary.uploader.upload(file.path)) || []
+    );
+  }
+
   const { id } = req?.params;
-  const { price, ...rest } = req?.body;
+  let { price,discount, ...rest } = req?.body;
   const existingData = await products.findById(id);
-  // console.log(existingData, "hell.");
   if (!existingData) return next(new errorResponse("No data found!!", 400));
-  const data = await products.findByIdAndUpdate(id, {
+
+  price = JSON.parse(price);
+
+  const updatedPrice = price.map((item) => ({
+    ...item,
+    totalPrice: item?.price * (1 - (discount || 0) / 100)
+  }));
+
+
+
+  const updatedData = {
     ...rest,
-    price: JSON.parse(price),
+    discount,
+    price: updatedPrice,
     gallery:
       Array.isArray(galleryResults) &&
       galleryResults?.length > 0 &&
       galleryResults?.map((result) => result?.secure_url) || existingData?.gallery,
     productBanner: productBannerResult?.secure_url || existingData?.productBanner,
-
     productImg: productImgResult?.secure_url || existingData?.productImg,
-  });
- 
-  res
-    .status(200)
-    .json({ status: true, message: "Updated successfully!!", data });
+  };
+
+console.log(updatedData)
+  await products.findByIdAndUpdate(id, updatedData);
+
+  res.status(200).json({ status: true, message: "Updated successfully!!", data: updatedData });
 });
+
 
 // @desc - get particular product api
 // @route - GET api/v1/product/:id

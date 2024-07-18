@@ -32,9 +32,9 @@ const bookingSchema = new mongoose.Schema(
         type: Object,
         ref: "product",
         productId: mongoose.Types.ObjectId,
-        price: String,
+        price: Number,
         weight: String,
-        totalItem:Number,
+        totalItem: Number,
         required: [true,"product required"]
       },
     ],

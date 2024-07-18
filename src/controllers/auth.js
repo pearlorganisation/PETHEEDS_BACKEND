@@ -56,7 +56,7 @@ export const login = asyncHandler(async (req, res, next) => {
     { expiresIn: process.env.ACCESS_TOKEN_VALIDITY }
   );
 
-  saveAccessTokenToCookie(isDataExists?.role, res, accessToken);
+  saveAccessTokenToCookie(res, accessToken);
 
   res.status(200).json({ status: true, data:isDataExists, message: "Logged in successfully!!" });
 });
@@ -143,3 +143,19 @@ export const resetPassword = async(req,res)=>{
   }
 
   }
+
+  export const refreshToken = asyncHandler(async (req, res, next) => {
+    const { email} = req?.body;
+    const isDataExists = await auth.findOne({ email });
+  
+    const accessToken = jwt.sign(
+      { email: isDataExists?.email },
+      process.env.JWT_SECRET_KEY,
+      { expiresIn: process.env.ACCESS_TOKEN_REFRESHTOKENVALIDITY }
+    );
+    if(!accessToken)
+  
+    saveAccessTokenToCookie(res, accessToken);
+
+    res.status(200).json({ status: true, message: "Refresh token successfully!!" });
+  });
