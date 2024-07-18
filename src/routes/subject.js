@@ -10,6 +10,6 @@ import {
 
 const router = express.Router();
 
-router.route("/").get(getAllSubjects).post(verifyTokenMiddleware,newSubject);
-router.route("/:id").delete(verifyTokenMiddleware,deleteSubject).patch(verifyTokenMiddleware,updateSubject);
+router.route("/").get(getAllSubjects).post(newSubject);
+router.route("/:id").delete(deleteSubject).patch(updateSubject);
 export default router;

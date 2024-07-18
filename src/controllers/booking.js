@@ -45,14 +45,45 @@ export const bookingOrder = asyncHandler(async (req, res, next) => {
 
 export const getAllBookings = asyncHandler(async (req, res, next) => {
 
- const bookingData = await booking
+  await booking.deleteMany({ isBookedSuccessfully: false });
+
+    // pagination
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 0;
+
+    // page 1 : 1-12; page 2 : 13-24; page 3 : 25-36
+    const skip = (page - 1) * limit;
+  
+    if (req.query.page) {
+      const dataCount = await booking.countDocuments();
+  
+      if (skip >= dataCount) {
+        return next(new errorResponse("No data found!!", 400));
+      }
+
+ const data = await booking
     .find()
     .populate("product.productId")
     .populate("orderById").populate("address")
+    .skip(skip)
+      .limit(limit);
 
-  await booking.deleteMany({ isBookedSuccessfully: false });
+      res.status(200).json({
+        getStatus: true,
+        length: data.length,
+        data,
+        totalPages: Math.ceil(dataCount / limit),   });
+    }
+    else {
+        const data = await booking
+          .find(req.query)
+          .populate("product.productId")
+          .populate("orderById").populate("address");
+        res.status(200).json({ getStatus: true, length: data.length, data });
+      }
 
-  res.status(200).json({ status: true,message: bookingData?.length >= 1 ? "Data found successfully!" : "No data found!!", bookingData });
+
+
 });
 
 //Get Particular User bookings

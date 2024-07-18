@@ -5,7 +5,7 @@ import { verifyTokenMiddleware } from "../middlewares/verifyToken.js";
 
 const router = express.Router();
 
-router.route("/").get(getAllAppointments).post(verifyTokenMiddleware,newAppointment);
-router.route('/:id').delete(verifyTokenMiddleware,deleteAppointment)
+router.route("/").get(getAllAppointments).post(newAppointment);
+router.route('/:id').delete(deleteAppointment)
 
 export default router;
