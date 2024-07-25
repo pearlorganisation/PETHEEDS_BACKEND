@@ -62,6 +62,7 @@ import mailRoutes from "./src/routes/mail.js"
 import brandRoutes from "./src/routes/brand.js"
 import bookingRoutes from "./src/routes/booking.js"
 import addressRoutes from "./src/routes/address.js"
+import reviewRoutes from "./src/routes/review.js"
 
 
 // @@Desc:-----------------route section-----------------
@@ -79,6 +80,7 @@ app.use("/api/v1/appointment",appointmentRoutes)
 app.use("/api/v1/brand", brandRoutes)
 app.use("/api/v1/booking", bookingRoutes)
 app.use("/api/v1/address", addressRoutes)
+app.use("/api/v1/review", reviewRoutes)
 app.use(error);
 
 

@@ -126,7 +126,7 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
 
   const updatedPrice = price.map((item) => ({
     ...item,
-    totalPrice: item?.price * (1 - (discount || 0) / 100)
+    totalPrice: Math.round(item?.price * (1 - (discount || 0) / 100))
   }));
 
 
@@ -143,7 +143,7 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
     productImg: productImgResult?.secure_url || existingData?.productImg,
   };
 
-console.log(updatedData)
+// console.log(updatedData)
   await products.findByIdAndUpdate(id, updatedData);
 
   res.status(200).json({ status: true, message: "Updated successfully!!", data: updatedData });
