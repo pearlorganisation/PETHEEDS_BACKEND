@@ -6,16 +6,16 @@ import { cloudinary } from "../config/cloudinary.js";
 // @desc - new review category
 // @route - POST api/v1/review
 export const newReview = asyncHandler(async (req, res, next) => {
-
-  const photo = req?.file;
-
-  if(photo)
-    { var photoResult = await cloudinary.uploader.upload(
-      photo?.path
-    );}
+  const reviewImages = req?.files;
+  if(reviewImages)
+    {
+       var reviewImagesResult = await Promise.all(
+        reviewImages.map((file) => cloudinary.uploader.upload(file.path))
+    );
+  }
 
   const newDoc = new review({...req?.body,
-    photo: photoResult?.secure_url,
+    reviewImages: reviewImagesResult.map((result) => result.secure_url),
   });
 
   let data = await newDoc.save();
@@ -32,7 +32,7 @@ export const getReviewTotalProducts = asyncHandler(async (req, res, next) => {
       $group: {
         _id: "$product", // Group by the product field
         totalRatings: { $sum: 1 }, // Count the number of ratings
-        totalImages: { $sum: { $cond: [{ $ifNull: ["$photo", false] }, 1, 0] } }, // Count the number of documents with a photo
+        totalImages: { $sum: { $cond: [{ $ifNull: ["$reviewImages", false] }, 1, 0] } }, // Count the number of documents with a photo
         totalReviews: { $sum: { $cond: [{ $ifNull: ["$message", false] }, 1, 0] } } // Count the number of documents with a review
       }
     },
@@ -75,9 +75,12 @@ export const getReviewTotalProducts = asyncHandler(async (req, res, next) => {
 });
 
 
-export const getParticularProductReviews = asyncHandler(async (req, res, next) => {
 
-  const data = await review.find();
+export const getParticularProductReviews = asyncHandler(async (req, res, next) => {
+const {id}= req?.params
+
+
+  const data = await review.find({product:id});
   res.status(200).json({
     status: true,
     message: data?.length >= 1 ? "Data found successfully!" : "No data found!!",
