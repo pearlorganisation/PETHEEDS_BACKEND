@@ -64,7 +64,7 @@ export const getAllBookings = asyncHandler(async (req, res, next) => {
  const data = await booking
     .find()
     .populate("product.productId")
-    .populate("orderById").populate("address")
+    .populate("orderById").populate("address").sort({createdAt: -1})
     .skip(skip)
       .limit(limit);
 
@@ -92,7 +92,7 @@ export const getParticularUserBookings= asyncHandler(async(req,res,next)=>{
   await booking.deleteMany({ isBookedSuccessfully: false });
 const {id} = req?.params
 
-  const data = await booking.find({orderById:id}).populate("product.productId").populate("address")
+  const data = await booking.find({orderById:id}).sort({createdAt: -1}).populate("product.productId").populate("address")
 
   if (!data)
     return next(new errorResponse("No data found with given id!!"));
@@ -171,3 +171,17 @@ console.log(req?.body)
     });
   }
 });
+
+export const updateCompleteOrder = asyncHandler(async (req, res, next) => {
+  const {id}= req?.params
+  const {isCompleted}= req?.body
+    const data = await booking.findByIdAndUpdate(id,{isCompleted:isCompleted});
+    if(!data){
+      return next( new errorResponse("Id is not valid to approve the review",400))
+    }
+    res.status(200).json({
+      status: true,
+      message:"Order completed successfully!" ,
+    });
+  });
+
