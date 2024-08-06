@@ -12,7 +12,11 @@ const reviewSchema = new mongoose.Schema({
     reviewImages: [],
     message:{
         type:String
+    },
+    isApproved: {
+        type:Boolean,
+        default:false
     }
-})
+},{timestamps:true})
 
 export default mongoose.model("review",reviewSchema)
