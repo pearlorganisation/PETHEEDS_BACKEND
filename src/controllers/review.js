@@ -33,7 +33,8 @@ export const getReviewTotalProducts = asyncHandler(async (req, res, next) => {
         _id: "$product", // Group by the product field
         totalRatings: { $sum: 1 }, // Count the number of ratings
         totalImages: { $sum: { $cond: [{ $ifNull: ["$reviewImages", false] }, 1, 0] } }, // Count the number of documents with a photo
-        totalReviews: { $sum: { $cond: [{ $ifNull: ["$message", false] }, 1, 0] } } // Count the number of documents with a review
+        totalReviews: { $sum: { $cond: [{ $ifNull: ["$message", false] }, 1, 0] } }, // Count the number of documents with a review
+        latestReviewDate: { $max: "$createdAt" } // Get the latest review date for each product
       }
     },
     {
@@ -64,6 +65,9 @@ export const getReviewTotalProducts = asyncHandler(async (req, res, next) => {
       "productDetails.__v":0,
       "productDetails.gallery":0
       }
+    },
+    {
+      $sort: { latestReviewDate: -1 } // Sort by the latest review date in descending order
     }
   ]);
 
@@ -105,3 +109,17 @@ export const deleteReview = asyncHandler(async (req, res, next) => {
 });
 
 
+export const approvalProductReviews = asyncHandler(async (req, res, next) => {
+  const {id}= req?.params
+  const {approval}= req?.body
+  
+  
+    const data = await review.findByIdAndUpdate(id,{isApproved:approval});
+    if(!data){
+      return next( new errorResponse("Id is not valid to approve the review",400))
+    }
+    res.status(200).json({
+      status: true,
+      message:"Review approved successfully!" ,
+    });
+  });
