@@ -23,7 +23,7 @@ export const newAppointment = async (req, res) => {
 // @route - GET api/v1/appointment
 export const getAllAppointments = async (req, res) => {
   try {
-    const data = await appointment.find().populate("subject");
+    const data = await appointment.find().sort({createdAt:-1}).populate("subject");
     res.status(200).json({ status: true, data });
   } catch (error) {
     res.status(400).json({
