@@ -82,9 +82,18 @@ export const getReviewTotalProducts = asyncHandler(async (req, res, next) => {
 
 export const getParticularProductReviews = asyncHandler(async (req, res, next) => {
 const {id}= req?.params
+const isApproved = req?.query?.isApproved
 
+const queryObj = {product:id,isApproved}
+// Filter out empty query parameters
+Object.keys(queryObj).forEach((key) => {
+  if (queryObj[key] === undefined) {
+    delete queryObj[key];
+  }
+});
+console.log(queryObj)
 
-  const data = await review.find({product:id});
+  const data = await review.find(queryObj).sort({createdAt:-1});
   res.status(200).json({
     status: true,
     message: data?.length >= 1 ? "Data found successfully!" : "No data found!!",

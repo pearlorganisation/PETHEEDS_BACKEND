@@ -47,6 +47,16 @@ export const getAllBookings = asyncHandler(async (req, res, next) => {
 
   await booking.deleteMany({ isBookedSuccessfully: false });
 
+  const queryObj = { _id: req?.query?._id, orderStatus: req?.query?.orderStatus };
+console.log(queryObj)
+
+   // Filter out empty query parameters
+   Object.keys(queryObj).forEach((key) => {
+    if (queryObj[key] === "") {
+      delete queryObj[key];
+    }
+  });
+
     // pagination
     const page = req.query.page * 1 || 1;
     const limit = req.query.limit * 1 || 0;
@@ -55,14 +65,10 @@ export const getAllBookings = asyncHandler(async (req, res, next) => {
     const skip = (page - 1) * limit;
   
     if (req.query.page) {
-      const dataCount = await booking.countDocuments();
-  
-      if (skip >= dataCount) {
-        return next(new errorResponse("No data found!!", 400));
-      }
+      const dataCount = await booking.countDocuments(queryObj);
 
  const data = await booking
-    .find()
+    .find(queryObj)
     .populate("product.productId")
     .populate("orderById").populate("address").sort({createdAt: -1})
     .skip(skip)
@@ -175,7 +181,7 @@ console.log(req?.body)
 export const updateCompleteOrder = asyncHandler(async (req, res, next) => {
   const {id}= req?.params
   const {isCompleted}= req?.body
-    const data = await booking.findByIdAndUpdate(id,{isCompleted:isCompleted});
+    const data = await booking.findByIdAndUpdate(id,{orderStatus:isCompleted});
     if(!data){
       return next( new errorResponse("Id is not valid to approve the review",400))
     }

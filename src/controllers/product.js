@@ -6,14 +6,14 @@ import { cloudinary } from "../config/cloudinary.js";
 // @desc - new product
 // @route - POST api/v1/product
 export const newProduct = asyncHandler(async (req, res, next) => {
- 
   const { productImg, gallery, productBanner } = req?.files;
   // Upload files to Cloudinary
   const productImgResult = await cloudinary.uploader.upload(productImg[0].path);
- if(productBanner)
-  { var productBannerResult = await cloudinary.uploader.upload(
-    productBanner[0].path
-  );}
+  if (productBanner) {
+    var productBannerResult = await cloudinary.uploader.upload(
+      productBanner[0].path
+    );
+  }
 
   const galleryResults = await Promise.all(
     gallery.map((file) => cloudinary.uploader.upload(file.path))
@@ -44,6 +44,19 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
     delete queryObj[el];
   });
 
+   // Filter out empty query parameters
+   Object.keys(queryObj).forEach((key) => {
+    if (queryObj[key] === "") {
+      delete queryObj[key];
+    }
+  });
+
+    // Convert each queryObj value to a case-insensitive regex
+    Object.keys(queryObj).forEach((key) => {
+      if (key === "productName" )
+        {queryObj[key] = new RegExp(`^${queryObj[key]}`, "i")}
+    });
+
   // console.log(queryObj)
 
   // pagination
@@ -54,17 +67,17 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
   const skip = (page - 1) * limit;
 
   if (req.query.page) {
-    const dataCount = await products.countDocuments();
+    const dataCount = await products.countDocuments(queryObj);
 
-    if (skip >= dataCount) {
-      return next(new errorResponse("No data found!!", 400));
-    }
-    const data = await products
-      .find(queryObj)
-      .populate("category")
-      .populate("brand")
-      .skip(skip)
-      .limit(limit);
+    // if (skip >= dataCount) {
+    //   return next(new errorResponse("No data found!!", 400));
+    // }
+    const data = await products.find(queryObj)
+    .populate("category")
+    .populate("brand")
+    .skip(skip)
+    .limit(limit);
+    
     res.status(200).json({
       getStatus: true,
       length: data.length,
@@ -118,7 +131,7 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
   }
 
   const { id } = req?.params;
-  let { price,discount, ...rest } = req?.body;
+  let { price, discount, ...rest } = req?.body;
   const existingData = await products.findById(id);
   if (!existingData) return next(new errorResponse("No data found!!", 400));
 
@@ -126,29 +139,34 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
 
   const updatedPrice = price.map((item) => ({
     ...item,
-    totalPrice: Math.round(item?.price * (1 - (discount || 0) / 100))
+    totalPrice: Math.round(item?.price * (1 - (discount || 0) / 100)),
   }));
-
-
 
   const updatedData = {
     ...rest,
     discount,
     price: updatedPrice,
     gallery:
-      Array.isArray(galleryResults) &&
-      galleryResults?.length > 0 &&
-      galleryResults?.map((result) => result?.secure_url) || existingData?.gallery,
-    productBanner: productBannerResult?.secure_url || existingData?.productBanner,
+      (Array.isArray(galleryResults) &&
+        galleryResults?.length > 0 &&
+        galleryResults?.map((result) => result?.secure_url)) ||
+      existingData?.gallery,
+    productBanner:
+      productBannerResult?.secure_url || existingData?.productBanner,
     productImg: productImgResult?.secure_url || existingData?.productImg,
   };
 
-// console.log(updatedData)
+  // console.log(updatedData)
   await products.findByIdAndUpdate(id, updatedData);
 
-  res.status(200).json({ status: true, message: "Updated successfully!!", data: updatedData });
+  res
+    .status(200)
+    .json({
+      status: true,
+      message: "Updated successfully!!",
+      data: updatedData,
+    });
 });
-
 
 // @desc - get particular product api
 // @route - GET api/v1/product/:id
