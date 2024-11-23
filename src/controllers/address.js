@@ -38,7 +38,9 @@ export const deleteAddress = asyncHandler(async (req, res, next) => {
 
   const {id} =req?.params
 
-  const isValidId = await address.findByIdAndDelete(id);
+  const isValidId = await address.findByIdAndUpdate(id,{
+    isActive:false
+  });
  if(!isValidId){
   return next ( new errorResponse("Id is not valid to delete the address",400))
  }
@@ -63,7 +65,7 @@ export const getParticularUserAddress= asyncHandler(async(req,res,next)=>{
    
   const {id} = req?.params
   
-    const data = await address.find({userId:id})
+    const data = await address.find({userId:id,isActive:true});
   
     if (!data)
       return next(new errorResponse("No data found with given id!!"));

@@ -7,7 +7,6 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js"
-
   },
   "author": "",
   "license": "ISC",
@@ -27,6 +26,6 @@
     "nodemailer": "^6.9.13",
     "nodemon": "^3.0.3",
     "path": "^0.12.7",
-    "razorpay": "^2.9.4"
+    "razorpay": "^2.9.5"
   }
 }

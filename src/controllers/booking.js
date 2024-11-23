@@ -69,10 +69,12 @@ console.log(queryObj)
 
  const data = await booking
     .find(queryObj)
-    .populate("product.productId")
-    .populate("orderById").populate("address").sort({createdAt: -1})
+    .sort("-createdAt")
     .skip(skip)
-      .limit(limit);
+    .limit(limit)
+    .populate("product.productId")
+    .populate("orderById").populate("address");
+ 
 
       res.status(200).json({
         getStatus: true,
