@@ -2,6 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import errorResponse from "../utils/errorResponse.js";
 import products from "../models/products.js";
 import { cloudinary } from "../config/cloudinary.js";
+import mongoose from "mongoose";
 
 // @desc - new product
 // @route - POST api/v1/product
@@ -49,13 +50,14 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
     if (queryObj[key] === "") {
       delete queryObj[key];
     }
+  else if(key ==="category" || key ==="brand"){
+    queryObj[key]= new mongoose.Types.ObjectId(queryObj[key])
+  }
+
+    else if(key === "productName")
+      {queryObj[key] = new RegExp(`^${queryObj[key]}`, "i")}
   });
 
-    // Convert each queryObj value to a case-insensitive regex
-    Object.keys(queryObj).forEach((key) => {
-      if (key === "productName" )
-        {queryObj[key] = new RegExp(`^${queryObj[key]}`, "i")}
-    });
 
   // console.log(queryObj)
 
@@ -78,7 +80,7 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
   
   // Pagination logic
   const skip = (page - 1) * limit;
-  
+  console.log(queryObj)
   // Aggregate pipeline with dynamic sorting
   const data = await products.aggregate([
     { $match: queryObj },
@@ -116,13 +118,6 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
     { $skip: skip },
     { $limit: limit }
   ]);
-    // const data = await products.find(queryObj)
-    // .populate("category")
-    // .populate("brand")
-    // // .skip(skip)
-    // // .limit(limit)
-    // .sort("-price.0.totalPrice");
-
 
     res.status(200).json({
       getStatus: true,
