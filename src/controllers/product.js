@@ -44,18 +44,19 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
     delete queryObj[el];
   });
 
-   // Filter out empty query parameters
-   Object.keys(queryObj).forEach((key) => {
+  // Filter out empty query parameters
+  Object.keys(queryObj).forEach((key) => {
     if (queryObj[key] === "") {
       delete queryObj[key];
     }
   });
 
-    // Convert each queryObj value to a case-insensitive regex
-    Object.keys(queryObj).forEach((key) => {
-      if (key === "productName" )
-        {queryObj[key] = new RegExp(`^${queryObj[key]}`, "i")}
-    });
+  // Convert each queryObj value to a case-insensitive regex
+  Object.keys(queryObj).forEach((key) => {
+    if (key === "productName") {
+      queryObj[key] = new RegExp(`^${queryObj[key]}`, "i");
+    }
+  });
 
   // console.log(queryObj)
 
@@ -72,12 +73,13 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
     // if (skip >= dataCount) {
     //   return next(new errorResponse("No data found!!", 400));
     // }
-    const data = await products.find(queryObj)
-    .populate("category")
-    .populate("brand")
-    .skip(skip)
-    .limit(limit);
-    
+    const data = await products
+      .find(queryObj)
+      .populate("category")
+      .populate("brand")
+      .skip(skip)
+      .limit(limit);
+
     res.status(200).json({
       getStatus: true,
       length: data.length,
@@ -159,13 +161,11 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
   // console.log(updatedData)
   await products.findByIdAndUpdate(id, updatedData);
 
-  res
-    .status(200)
-    .json({
-      status: true,
-      message: "Updated successfully!!",
-      data: updatedData,
-    });
+  res.status(200).json({
+    status: true,
+    message: "Updated successfully!!",
+    data: updatedData,
+  });
 });
 
 // @desc - get particular product api
