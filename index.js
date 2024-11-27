@@ -63,9 +63,11 @@ import brandRoutes from "./src/routes/brand.js"
 import bookingRoutes from "./src/routes/booking.js"
 import addressRoutes from "./src/routes/address.js"
 import reviewRoutes from "./src/routes/review.js"
+import morgan from "morgan";
 
 
 // @@Desc:-----------------route section-----------------
+app.use(morgan('dev'));
 app.use("/api/v1/auth", authRoutes);
 // app.use("/api/v1/subject", enquirySubjectRoutes);
 app.use("/api/v1/callbackRequest", requestCallbackRoutes);
