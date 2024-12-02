@@ -51,9 +51,13 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
       delete queryObj[key];
     } else if (key === "category" || key === "brand") {
       queryObj[key] = new mongoose.Types.ObjectId(queryObj[key]);
-    } else if (key === "productName") {
-      queryObj[key] = new RegExp(`^${queryObj[key]}`, "i");
     }
+      else if(key ==="newInStore"){
+    queryObj[key]= Boolean(queryObj[key])
+  }
+      else if(key === "productName")
+      {queryObj[key] = new RegExp(`^${queryObj[key]}`, "i")}
+
   });
 
   // console.log(queryObj)
