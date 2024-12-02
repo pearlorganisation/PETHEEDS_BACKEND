@@ -51,13 +51,11 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
       delete queryObj[key];
     } else if (key === "category" || key === "brand") {
       queryObj[key] = new mongoose.Types.ObjectId(queryObj[key]);
+    } else if (key === "newInStore") {
+      queryObj[key] = Boolean(queryObj[key]);
+    } else if (key === "productName") {
+      queryObj[key] = new RegExp(`^${queryObj[key]}`, "i");
     }
-      else if(key ==="newInStore"){
-    queryObj[key]= Boolean(queryObj[key])
-  }
-      else if(key === "productName")
-      {queryObj[key] = new RegExp(`^${queryObj[key]}`, "i")}
-
   });
 
   // console.log(queryObj)
@@ -75,8 +73,8 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
     finalSort = { "price.0.totalPrice": -1 }; // Sort by totalPrice descending
   } else if (sort === 1) {
     finalSort = { "price.0.totalPrice": 1 }; // Sort by totalPrice ascending
-  } else if(sort === "better-discount") {
-    finalSort = { "discount": -1 }; // Sort by discount descending (if no price sort)
+  } else if (sort === "better-discount") {
+    finalSort = { discount: -1 }; // Sort by discount descending (if no price sort)
   }
 
   // Pagination logic
