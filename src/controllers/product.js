@@ -54,6 +54,10 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
     queryObj[key]= new mongoose.Types.ObjectId(queryObj[key])
   }
 
+  else if(key ==="newInStore"){
+    queryObj[key]= Boolean(queryObj[key])
+  }
+
     else if(key === "productName")
       {queryObj[key] = new RegExp(`^${queryObj[key]}`, "i")}
   });
