@@ -45,30 +45,27 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
     delete queryObj[el];
   });
 
-   // Filter out empty query parameters
-   Object.keys(queryObj).forEach((key) => {
+  // Filter out empty query parameters
+  Object.keys(queryObj).forEach((key) => {
     if (queryObj[key] === "") {
       delete queryObj[key];
+    } else if (key === "category" || key === "brand") {
+      queryObj[key] = new mongoose.Types.ObjectId(queryObj[key]);
     }
-  else if(key ==="category" || key ==="brand"){
-    queryObj[key]= new mongoose.Types.ObjectId(queryObj[key])
-  }
-
-  else if(key ==="newInStore"){
+      else if(key ==="newInStore"){
     queryObj[key]= Boolean(queryObj[key])
   }
-
-    else if(key === "productName")
+      else if(key === "productName")
       {queryObj[key] = new RegExp(`^${queryObj[key]}`, "i")}
-  });
 
+  });
 
   // console.log(queryObj)
 
   // pagination
   const page = req.query.page * 1 || 1;
   const limit = req.query.limit * 1 || 10;
-  const sort = Number(req?.query?.sort) 
+  const sort = Number(req?.query?.sort);
   let finalSort = {};
 
   const dataCount = await products.countDocuments(queryObj);
@@ -81,10 +78,10 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
   } else if(sort === "better-discount") {
     finalSort = { "discount": -1 }; // Sort by discount descending (if no price sort)
   }
-  
+
   // Pagination logic
   const skip = (page - 1) * limit;
-  console.log(queryObj)
+  console.log(queryObj);
   // Aggregate pipeline with dynamic sorting
   const data = await products.aggregate([
     { $match: queryObj },
@@ -93,45 +90,43 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
         from: "categories",
         localField: "category",
         foreignField: "_id",
-        as: "category"
-      }
+        as: "category",
+      },
     },
     {
       $lookup: {
         from: "brand",
         localField: "brand",
         foreignField: "_id",
-        as: "brand"
-      }
+        as: "brand",
+      },
     },
     {
       $unwind: {
         path: "$category",
-        preserveNullAndEmptyArrays: true
-      }
+        preserveNullAndEmptyArrays: true,
+      },
     },
     {
       $unwind: {
         path: "$brand",
-        preserveNullAndEmptyArrays: true
-      }
+        preserveNullAndEmptyArrays: true,
+      },
     },
     {
-      $sort: { ...finalSort } // Apply dynamic sorting
+      $sort: { ...finalSort }, // Apply dynamic sorting
     },
     { $skip: skip },
-    { $limit: limit }
+    { $limit: limit },
   ]);
 
-    res.status(200).json({
-      getStatus: true,
-      length: data.length,
-      data,
-      totalPages: Math.ceil(dataCount / limit),
-    });
-
+  res.status(200).json({
+    getStatus: true,
+    length: data.length,
+    data,
+    totalPages: Math.ceil(dataCount / limit),
+  });
 });
-
 
 // @desc - delete existing product
 // @route - DELETE api/v1/product/:id
@@ -199,13 +194,11 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
   // console.log(updatedData)
   await products.findByIdAndUpdate(id, updatedData);
 
-  res
-    .status(200)
-    .json({
-      status: true,
-      message: "Updated successfully!!",
-      data: updatedData,
-    });
+  res.status(200).json({
+    status: true,
+    message: "Updated successfully!!",
+    data: updatedData,
+  });
 });
 
 // @desc - get particular product api
