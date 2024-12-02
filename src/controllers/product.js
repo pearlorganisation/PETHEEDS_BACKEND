@@ -78,7 +78,7 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
     finalSort = { "price.0.totalPrice": -1 }; // Sort by totalPrice descending
   } else if (sort === 1) {
     finalSort = { "price.0.totalPrice": 1 }; // Sort by totalPrice ascending
-  } else {
+  } else if(sort === "better-discount") {
     finalSort = { "discount": -1 }; // Sort by discount descending (if no price sort)
   }
   
