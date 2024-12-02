@@ -65,15 +65,15 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
   // pagination
   const page = req.query.page * 1 || 1;
   const limit = req.query.limit * 1 || 10;
-  const sort = Number(req?.query?.sort);
+  const sort = req?.query?.sort
   let finalSort = {};
 
   const dataCount = await products.countDocuments(queryObj);
 
   // Define sorting logic
-  if (sort === -1) {
+  if (sort == -1) {
     finalSort = { "price.0.totalPrice": -1 }; // Sort by totalPrice descending
-  } else if (sort === 1) {
+  } else if (sort == 1) {
     finalSort = { "price.0.totalPrice": 1 }; // Sort by totalPrice ascending
   } else if(sort === "better-discount") {
     finalSort = { "discount": -1 }; // Sort by discount descending (if no price sort)
