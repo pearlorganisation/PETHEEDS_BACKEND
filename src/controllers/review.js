@@ -2,10 +2,16 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import errorResponse from "../utils/errorResponse.js";
 import review from "../models/review.js";
 import { cloudinary } from "../config/cloudinary.js";
+import booking from "../models/booking.js";
 
 // @desc - new review category
 // @route - POST api/v1/review
 export const newReview = asyncHandler(async (req, res, next) => {
+  console.log(req?.body)
+  const {rating ,message,orderId,product} = req?.body
+  let {productData} = req?.body
+  productData = JSON.parse(productData)
+
   const reviewImages = req?.files;
   if(reviewImages)
     {
@@ -17,6 +23,26 @@ export const newReview = asyncHandler(async (req, res, next) => {
   const newDoc = new review({...req?.body,
     reviewImages: reviewImagesResult.map((result) => result.secure_url),
   });
+
+  const bookingData= await booking.findById(orderId).lean()
+
+  // console.log(bookingData)
+  console.log(bookingData.product.map((item,idx)=>{
+   return item?.productId === product ? {...item,rating:{
+      rating:rating,message:message,reviewImages:reviewImagesResult.map((result) => result.secure_url)
+    }  } : {...item}
+  }))
+
+  const productOrderField = bookingData.product.map((item,idx)=>{
+    return item?.productId === product ? {...item,rating:{
+       rating:rating,message:message,reviewImages:reviewImagesResult.map((result) => result.secure_url)
+     }  } : {...item}
+   })
+
+
+await booking.updateOne({_id:orderId},{$set:{product:productOrderField
+}})
+
 
   let data = await newDoc.save();
   res

@@ -63,12 +63,12 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
   // console.log(queryObj)
 
   // pagination
+  const dataCount = await products.countDocuments(queryObj);
   const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || 10;
+  const limit = req.query.limit * 1 || dataCount
   const sort = req?.query?.sort
   let finalSort = {};
 
-  const dataCount = await products.countDocuments(queryObj);
 
   // Define sorting logic
   if (sort == -1) {
