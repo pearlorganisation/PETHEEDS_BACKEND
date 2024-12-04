@@ -35,7 +35,7 @@ const bookingSchema = new mongoose.Schema(
         price: Number,
         weight: String,
         totalItem: Number,
-        required: [true,"product required"]
+        rating: Object
       },
     ],
 
@@ -53,6 +53,9 @@ const bookingSchema = new mongoose.Schema(
     },
     razorpay_order_id: {
       type: String,
+    },
+    rating: {
+      type:{},
     },
   },
   { timestamps: true }
