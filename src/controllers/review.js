@@ -2,10 +2,12 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import errorResponse from "../utils/errorResponse.js";
 import review from "../models/review.js";
 import { cloudinary } from "../config/cloudinary.js";
+import booking from "../models/booking.js";
 
 // @desc - new review category
 // @route - POST api/v1/review
 export const newReview = asyncHandler(async (req, res, next) => {
+  const {rating ,message,orderId} = req?.body
   const reviewImages = req?.files;
   if(reviewImages)
     {
@@ -17,6 +19,10 @@ export const newReview = asyncHandler(async (req, res, next) => {
   const newDoc = new review({...req?.body,
     reviewImages: reviewImagesResult.map((result) => result.secure_url),
   });
+
+  await booking.updateOne({_id:orderId},{$set:{rating:{rating:rating,message:message,reviewImages:reviewImagesResult.map((result) => result.secure_url)
+    
+  }}})
 
   let data = await newDoc.save();
   res

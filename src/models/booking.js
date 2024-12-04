@@ -54,6 +54,13 @@ const bookingSchema = new mongoose.Schema(
     razorpay_order_id: {
       type: String,
     },
+    rating: {
+      type:Number,
+      enum:[1,2,3,4,5],
+    },
+    rating: {
+      type:{},
+    },
   },
   { timestamps: true }
 );
