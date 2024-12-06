@@ -5,6 +5,10 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: [true, "product name is required!!"],
     },
+    productSlug: {
+      type: String,
+      required: [true, "product slug is required!!"],
+    },
     productImg: {
       type: {},
       required: [true, "Product image is required!!"],
