@@ -206,6 +206,6 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
 // @desc - get particular product api
 // @route - GET api/v1/product/:id
 export const getParticularProduct = asyncHandler(async (req, res, next) => {
-  const data = await products.findById(req?.params?.id);
+  const data = await products.findOne({productSlug:req?.params?.id});
   res.status(200).json({ status: true, data });
 });
