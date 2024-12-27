@@ -3,6 +3,7 @@ import errorResponse from "../utils/errorResponse.js";
 import products from "../models/products.js";
 import { cloudinary } from "../config/cloudinary.js";
 import mongoose from "mongoose";
+import chalk from "chalk";
 
 // @desc - new product
 // @route - POST api/v1/product
@@ -203,6 +204,6 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
 // @desc - get particular product api
 // @route - GET api/v1/product/:id
 export const getParticularProduct = asyncHandler(async (req, res, next) => {
-  const data = await products.findOne({productSlug:req?.params?.id});
+  const data = await products.findOne({ productSlug: req?.params?.id });
   res.status(200).json({ status: true, data });
 });

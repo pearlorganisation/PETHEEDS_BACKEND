@@ -26,25 +26,6 @@ export const newReview = asyncHandler(async (req, res, next) => {
 
   const bookingData = await booking.findById(orderId).lean();
 
-  // console.log(bookingData)
-  console.log(
-    bookingData.product.map((item, idx) => {
-      return item?.productId === product
-        ? {
-            ...item,
-            rating: {
-              rating: rating,
-              message: message,
-              reviewImages: reviewImagesResult.map(
-                (result) => result.secure_url
-              ),
-            },
-          }
-        : { ...item };
-    }),
-    "AC|VNISH||"
-  );
-
   const productOrderField = bookingData.product.map((item, idx) => {
     return item?.productId === product
       ? {
