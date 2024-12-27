@@ -7,7 +7,6 @@ import booking from "../models/booking.js";
 // @desc - new review category
 // @route - POST api/v1/review
 export const newReview = asyncHandler(async (req, res, next) => {
-  console.log(req?.body)
   const {rating ,message,orderId,product} = req?.body
   let {productData} = req?.body
   productData = JSON.parse(productData)
@@ -26,13 +25,6 @@ export const newReview = asyncHandler(async (req, res, next) => {
 
   const bookingData= await booking.findById(orderId).lean()
 
-  // console.log(bookingData)
-  console.log(bookingData.product.map((item,idx)=>{
-   return item?.productId === product ? {...item,rating:{
-      rating:rating,message:message,reviewImages:reviewImagesResult.map((result) => result.secure_url)
-    }  } : {...item}
-  }))
-
   const productOrderField = bookingData.product.map((item,idx)=>{
     return item?.productId === product ? {...item,rating:{
        rating:rating,message:message,reviewImages:reviewImagesResult.map((result) => result.secure_url)
@@ -50,6 +42,25 @@ await booking.updateOne({_id:orderId},{$set:{product:productOrderField
     .json({ status: true, message: "review created successfully!!", data });
 });
 
+export const adminGeneratedReview = asyncHandler(async (req, res, next) => {
+  const reviewImages = req?.files;
+  if(reviewImages)
+    {
+       var reviewImagesResult = await Promise.all(
+        reviewImages.map((file) => cloudinary.uploader.upload(file.path))
+    );
+  }
+
+  const newDoc = new review({...req?.body,
+    reviewImages: reviewImagesResult.map((result) => result.secure_url),isApproved:true,isAdmin:true
+  });
+
+  let data = await newDoc.save();
+  res
+    .status(201)
+    .json({ status: true, message: "review created successfully!!", data });
+});
+
 // @desc - get all reviews
 // @route - GET api/v1/review
 export const getReviewTotalProducts = asyncHandler(async (req, res, next) => {
@@ -60,6 +71,7 @@ export const getReviewTotalProducts = asyncHandler(async (req, res, next) => {
         totalRatings: { $sum: 1 }, // Count the number of ratings
         totalImages: { $sum: { $cond: [{ $ifNull: ["$reviewImages", false] }, 1, 0] } }, // Count the number of documents with a photo
         totalReviews: { $sum: { $cond: [{ $ifNull: ["$message", false] }, 1, 0] } }, // Count the number of documents with a review
+        totalIsAdmin: { $sum: { $cond: [{ $ifNull: ["$isAdmin", false] }, 1, 0] } }, // Count the number of documents with aadmin review
         latestReviewDate: { $max: "$createdAt" } // Get the latest review date for each product
       }
     },
@@ -89,7 +101,8 @@ export const getReviewTotalProducts = asyncHandler(async (req, res, next) => {
       "productDetails.createdAt":0,
       "productDetails.updatedAt":0,
       "productDetails.__v":0,
-      "productDetails.gallery":0
+      "productDetails.gallery":0,
+      "productDetails.productSlug":0,
       }
     },
     {
