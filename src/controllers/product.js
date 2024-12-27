@@ -63,9 +63,10 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
 
   // pagination
   const dataCount = await products.countDocuments(queryObj);
+ 
   const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || dataCount;
-  const sort = req?.query?.sort;
+  const limit = req.query.limit * 1 || dataCount || 1
+  const sort = req?.query?.sort
   let finalSort = {};
 
   // Define sorting logic
@@ -81,6 +82,7 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
 
   // Pagination logic
   const skip = (page - 1) * limit;
+
   console.log(queryObj);
   // Aggregate pipeline with dynamic sorting
   const data = await products.aggregate([
