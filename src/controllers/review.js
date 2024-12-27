@@ -43,11 +43,6 @@ export const newReview = asyncHandler(async (req, res, next) => {
     { $set: { product: productOrderField } }
   );
 
-  await booking.updateOne(
-    { _id: orderId },
-    { $set: { product: productOrderField } }
-  );
-
   let data = await newDoc.save();
   res
     .status(201)
