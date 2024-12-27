@@ -7,6 +7,7 @@ import booking from "../models/booking.js";
 // @desc - new review category
 // @route - POST api/v1/review
 export const newReview = asyncHandler(async (req, res, next) => {
+
   const { rating, message, orderId, product } = req?.body;
   let { productData } = req?.body;
   productData = JSON.parse(productData);
