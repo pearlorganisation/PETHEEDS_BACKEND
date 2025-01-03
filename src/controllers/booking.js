@@ -3,7 +3,6 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import errorResponse from "../utils/errorResponse.js";
 import { razorpayInstance } from "../config/razorpay.js";
 import crypto from "crypto";
-import { sendOrderMail } from "../utils/sendOrderMail.js";
 
 // @desc -creating new order section for razorpay and storing booking data in database
 // @route - POST api/v1/booking/bookingOrder
@@ -45,10 +44,7 @@ export const bookingOrder = asyncHandler(async (req, res, next) => {
 
 export const getAllBookings = asyncHandler(async (req, res, next) => {
 
-  await booking.deleteMany({ isBookedSuccessfully: false });
-
   const queryObj = { _id: req?.query?._id, orderStatus: req?.query?.orderStatus };
-console.log(queryObj)
 
    // Filter out empty query parameters
    Object.keys(queryObj).forEach((key) => {
@@ -97,7 +93,6 @@ console.log(queryObj)
 //Get Particular User bookings
 
 export const getParticularUserBookings= asyncHandler(async(req,res,next)=>{
-  await booking.deleteMany({ isBookedSuccessfully: false });
 const {id} = req?.params
 
   const data = await booking.find({orderById:id}).sort({createdAt: -1}).populate("product.productId").populate("address")
