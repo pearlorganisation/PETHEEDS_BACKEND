@@ -32,7 +32,6 @@ export const bookingOrder = asyncHandler(async (req, res, next) => {
       });
     })
     .catch(async (err) => {
-      await booking.findByIdAndDelete(newBooking._id);
       return res.status(400).json({
         status: false,
         message: err?.message || err,
@@ -122,7 +121,6 @@ export const verifyOrder = asyncHandler(async (req, res) => {
     const isAuthentic = expectedSignature === razorpay_signature;
 
     if (!isAuthentic) {
-      await booking.findByIdAndDelete(req?.params?.id);
       return res.redirect(`${process.env.FRONTEND_LIVE_URL}/paymentFailed/`);
     }
 
@@ -138,7 +136,6 @@ export const verifyOrder = asyncHandler(async (req, res) => {
       data: updateBooking,
     });
   } catch (e) {
-    await booking.findByIdAndDelete(req?.params?.id);
     res
       .status(400)
       .json({ status: false, message: e?.message || "Internal server error" });
@@ -151,7 +148,6 @@ export const createCodOrder = asyncHandler(async (req, res, next) => {
   try {
     const { amount, orderById, product, email,address } = req?.body;
 
-console.log(req?.body)
     const newBooking = await booking.create({
       amount,
       orderById,
@@ -167,7 +163,6 @@ console.log(req?.body)
       data: newBooking,
     });
   } catch (error) {
-    await booking.findByIdAndDelete(_id);
     res.status(400).json({
       status: false,
       message: error?.message || "Internal server Error",
