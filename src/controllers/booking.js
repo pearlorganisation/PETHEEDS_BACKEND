@@ -43,7 +43,7 @@ export const bookingOrder = asyncHandler(async (req, res, next) => {
 
 export const getAllBookings = asyncHandler(async (req, res, next) => {
 
-  const queryObj = { _id: req?.query?._id, orderStatus: req?.query?.orderStatus };
+  const queryObj = { _id: req?.query?._id, orderStatus: req?.query?.orderStatus,isBookedSuccessfully:true  };
 
    // Filter out empty query parameters
    Object.keys(queryObj).forEach((key) => {
@@ -79,7 +79,7 @@ export const getAllBookings = asyncHandler(async (req, res, next) => {
     }
     else {
         const data = await booking
-          .find(req.query)
+          .find({isBookedSuccessfully:true})
           .populate("product.productId")
           .populate("orderById").populate("address");
         res.status(200).json({ getStatus: true, length: data.length, data });

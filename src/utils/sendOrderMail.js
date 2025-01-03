@@ -23,7 +23,7 @@ export const sendOrderMail = async (email, orderId ,amount, date, paymentType) =
 
  let   mailOptions = {
         from: "avnish@pearlorganisation.com",
-        to: email,
+        to: [email,process.env.NODEMAILER_EMAIL],
         subject: "Your Petheeds Order Confirmation",
         html: data,
       };
