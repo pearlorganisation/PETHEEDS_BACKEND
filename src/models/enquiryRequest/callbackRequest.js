@@ -18,8 +18,7 @@ const callbackRequestSchema = new mongoose.Schema(
       required: ["Message field is required!!"],
     },
     subject: {
-      type: String,
-      required: [true, "Enquiry subject is required!!"],
+      type: String
     },
   },
   { timestamps: true }

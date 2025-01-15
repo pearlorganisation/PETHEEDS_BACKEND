@@ -6,14 +6,6 @@ import chalk from "chalk";
 import connectDB from "./src/config/db.js";
 import { error } from "./src/middlewares/error.js";
 
-// @@Desc:-----Handling uncaught Exception-----------------
-// process.on("uncaughtException", (err) => {
-//   console.log(err);
-//   console.log(`PETHEEDS-Error: ${err.message}`);
-//   console.log(
-//     `PETHEEDS-shutting down the server for handling uncaught exception`
-//   );
-// });
 
 dotenv.config();
 const app = express();
@@ -67,7 +59,6 @@ console.log();
 
 //@@Desc:-----------------importing routers---------------
 import authRoutes from "./src/routes/auth.js";
-import enquirySubjectRoutes from "./src/routes/enquiryRequest/enquirySubject.js";
 import requestCallbackRoutes from "./src/routes/enquiryRequest/callbackRequests.js";
 import blogCategoryRoutes from "./src/routes/blog/blogCategory.js";
 import blogRoutes from "./src/routes/blog/blog.js";
@@ -81,6 +72,7 @@ import brandRoutes from "./src/routes/brand.js";
 import bookingRoutes from "./src/routes/booking.js";
 import addressRoutes from "./src/routes/address.js";
 import reviewRoutes from "./src/routes/review.js";
+import couponCodeRoutes from "./src/routes/couponCode.js";
 import morgan from "morgan";
 
 // @@Desc:-----------------route section-----------------
@@ -100,6 +92,7 @@ app.use("/api/v1/brand", brandRoutes);
 app.use("/api/v1/booking", bookingRoutes);
 app.use("/api/v1/address", addressRoutes);
 app.use("/api/v1/review", reviewRoutes);
+app.use("/api/v1/couponCode", couponCodeRoutes);
 app.use(error);
 
 app.use("/", (req, res) => {
@@ -112,15 +105,3 @@ app.listen(PORT, () => {
   );
 });
 
-// unhandled promise rejection
-// process.on("unhandledRejection", (err) => {
-//   console.log(err);
-//   console.log(`PETHEEDS-Shutting down the server for ${err.message}`);
-//   console.log(
-//     `PETHEEDS-shutting down the server for unhandle promise rejection`
-//   );
-
-//   server.close(() => {
-//     process.exit(1);
-//   });
-// });
