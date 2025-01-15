@@ -2,7 +2,6 @@ import mongoose, { Mongoose } from "mongoose";
 
 const blogSchema = new mongoose.Schema(
   {
-  
     banner: {
       type: String,
       required: [true, "Banner image is required!!"],
@@ -11,9 +10,8 @@ const blogSchema = new mongoose.Schema(
     description: {
       type: String,
       required: [true, "Blog description is required!!"],
-    }
-
-    
+    },
+    blogSlug: { type: String, required: ["Blog Slug is required!!"] },
   },
 
   { timestamps: true }
