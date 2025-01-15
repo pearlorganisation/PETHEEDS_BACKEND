@@ -4,6 +4,7 @@ export const couponCodeSchema = new mongoose.Schema(
     couponCode: {
       type: String,
       required: [true, "couponCode is required!!"],
+      unique: true
     },
     minAmount: {
       type: Number,
@@ -13,10 +14,6 @@ export const couponCodeSchema = new mongoose.Schema(
       type: Number,
       required: [true, "discount is required!!"],
     },
-    isActive:{
-        type:Boolean,
-        default:true
-    }
   },
   { timestamps: true }
 );

@@ -10,6 +10,7 @@ import crypto from "crypto";
 export const bookingOrder = asyncHandler(async (req, res, next) => {
   const newBooking = await booking.create({
     amount: req?.body?.amount,
+    discount:req?.body?.discount,
     product: req?.body?.product,
     orderById: req?.body?.orderById,
     email: req?.body?.email,
@@ -94,7 +95,7 @@ export const getAllBookings = asyncHandler(async (req, res, next) => {
 export const getParticularUserBookings= asyncHandler(async(req,res,next)=>{
 const {id} = req?.params
 
-  const data = await booking.find({orderById:id}).sort({createdAt: -1}).populate("product.productId").populate("address")
+  const data = await booking.find({orderById:id,isBookedSuccessfully:true}).sort({createdAt: -1}).populate("product.productId").populate("address")
 
   if (!data)
     return next(new errorResponse("No data found with given id!!"));
@@ -146,10 +147,11 @@ export const verifyOrder = asyncHandler(async (req, res) => {
 
 export const createCodOrder = asyncHandler(async (req, res, next) => {
   try {
-    const { amount, orderById, product, email,address } = req?.body;
+    const { amount, orderById, product, email,address,discount } = req?.body;
 
     const newBooking = await booking.create({
       amount,
+      discount,
       orderById,
       address,
       product,
