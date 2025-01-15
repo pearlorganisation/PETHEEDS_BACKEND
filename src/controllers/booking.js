@@ -3,7 +3,6 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import errorResponse from "../utils/errorResponse.js";
 import { razorpayInstance } from "../config/razorpay.js";
 import crypto from "crypto";
-import { sendOrderMail } from "../utils/sendOrderMail.js";
 
 // @desc -creating new order section for razorpay and storing booking data in database
 // @route - POST api/v1/booking/bookingOrder
@@ -11,6 +10,7 @@ import { sendOrderMail } from "../utils/sendOrderMail.js";
 export const bookingOrder = asyncHandler(async (req, res, next) => {
   const newBooking = await booking.create({
     amount: req?.body?.amount,
+    discount:req?.body?.discount,
     product: req?.body?.product,
     orderById: req?.body?.orderById,
     email: req?.body?.email,
@@ -33,7 +33,6 @@ export const bookingOrder = asyncHandler(async (req, res, next) => {
       });
     })
     .catch(async (err) => {
-      await booking.findByIdAndDelete(newBooking._id);
       return res.status(400).json({
         status: false,
         message: err?.message || err,
@@ -45,10 +44,7 @@ export const bookingOrder = asyncHandler(async (req, res, next) => {
 
 export const getAllBookings = asyncHandler(async (req, res, next) => {
 
-  await booking.deleteMany({ isBookedSuccessfully: false });
-
-  const queryObj = { _id: req?.query?._id, orderStatus: req?.query?.orderStatus };
-console.log(queryObj)
+  const queryObj = { _id: req?.query?._id, orderStatus: req?.query?.orderStatus,isBookedSuccessfully:true  };
 
    // Filter out empty query parameters
    Object.keys(queryObj).forEach((key) => {
@@ -84,7 +80,7 @@ console.log(queryObj)
     }
     else {
         const data = await booking
-          .find(req.query)
+          .find({isBookedSuccessfully:true})
           .populate("product.productId")
           .populate("orderById").populate("address");
         res.status(200).json({ getStatus: true, length: data.length, data });
@@ -97,10 +93,9 @@ console.log(queryObj)
 //Get Particular User bookings
 
 export const getParticularUserBookings= asyncHandler(async(req,res,next)=>{
-  await booking.deleteMany({ isBookedSuccessfully: false });
 const {id} = req?.params
 
-  const data = await booking.find({orderById:id}).sort({createdAt: -1}).populate("product.productId").populate("address")
+  const data = await booking.find({orderById:id,isBookedSuccessfully:true}).sort({createdAt: -1}).populate("product.productId").populate("address")
 
   if (!data)
     return next(new errorResponse("No data found with given id!!"));
@@ -127,7 +122,6 @@ export const verifyOrder = asyncHandler(async (req, res) => {
     const isAuthentic = expectedSignature === razorpay_signature;
 
     if (!isAuthentic) {
-      await booking.findByIdAndDelete(req?.params?.id);
       return res.redirect(`${process.env.FRONTEND_LIVE_URL}/paymentFailed/`);
     }
 
@@ -143,7 +137,6 @@ export const verifyOrder = asyncHandler(async (req, res) => {
       data: updateBooking,
     });
   } catch (e) {
-    await booking.findByIdAndDelete(req?.params?.id);
     res
       .status(400)
       .json({ status: false, message: e?.message || "Internal server error" });
@@ -154,11 +147,11 @@ export const verifyOrder = asyncHandler(async (req, res) => {
 
 export const createCodOrder = asyncHandler(async (req, res, next) => {
   try {
-    const { amount, orderById, product, email,address } = req?.body;
+    const { amount, orderById, product, email,address,discount } = req?.body;
 
-console.log(req?.body)
     const newBooking = await booking.create({
       amount,
+      discount,
       orderById,
       address,
       product,
@@ -172,7 +165,6 @@ console.log(req?.body)
       data: newBooking,
     });
   } catch (error) {
-    await booking.findByIdAndDelete(_id);
     res.status(400).json({
       status: false,
       message: error?.message || "Internal server Error",

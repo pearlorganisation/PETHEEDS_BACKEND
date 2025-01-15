@@ -6,6 +6,10 @@ const bookingSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    discount: {
+      type: String,
+      required: true,
+    },
     orderById: {
       type: mongoose.Types.ObjectId,
       required: [true, "order by is required field!!"],

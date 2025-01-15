@@ -3,14 +3,21 @@ const productSchema = new mongoose.Schema(
   {
     productName: {
       type: String,
+      unique: true,
       required: [true, "product name is required!!"],
+    },
+    productSlug: {
+      type: String,
+      required: [true, "product slug is required!!"],
+      unique: true,
+      trim: true,
     },
     productImg: {
       type: {},
       required: [true, "Product image is required!!"],
     },
     productBanner: {
-      type: {}
+      type: {},
     },
     price: [
       {
@@ -19,31 +26,29 @@ const productSchema = new mongoose.Schema(
         },
         price: {
           type: Number,
-          
         },
-        totalPrice:{
-          type:Number
-        }
-      }
+        totalPrice: {
+          type: Number,
+        },
+      },
     ],
     discount: {
       type: Number,
-      
     },
-    newInStore:{
-      type:Boolean,
-      default:false
+    newInStore: {
+      type: Boolean,
+      default: false,
     },
-    brand:{
-      type:mongoose.Types.ObjectId,
-      ref:"brand",
-      required:[true,"Brand name is required!!"]
+    brand: {
+      type: mongoose.Types.ObjectId,
+      ref: "brand",
+      required: [true, "Brand name is required!!"],
     },
-  
+
     category: {
       type: mongoose.Types.ObjectId,
       ref: "category",
-      required:true,
+      required: true,
     },
 
     gallery: {
@@ -62,10 +67,13 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-productSchema.methods.calculateTotalPrice = function() {
+productSchema.methods.calculateTotalPrice = function () {
   // console.log(this,"this")
-  return this.price.map((item)=>{
-    return {...item,totalPrice:Math.round(item.price * (1 - (this.discount || 0)/ 100))}
+  return this.price.map((item) => {
+    return {
+      ...item,
+      totalPrice: Math.round(item.price * (1 - (this.discount || 0) / 100)),
+    };
   });
 };
 export default mongoose.model("product", productSchema);

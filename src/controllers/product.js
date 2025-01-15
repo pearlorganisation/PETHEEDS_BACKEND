@@ -3,6 +3,7 @@ import errorResponse from "../utils/errorResponse.js";
 import products from "../models/products.js";
 import { cloudinary } from "../config/cloudinary.js";
 import mongoose from "mongoose";
+import chalk from "chalk";
 
 // @desc - new product
 // @route - POST api/v1/product
@@ -51,38 +52,37 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
       delete queryObj[key];
     } else if (key === "category" || key === "brand") {
       queryObj[key] = new mongoose.Types.ObjectId(queryObj[key]);
+    } else if (key === "newInStore") {
+      queryObj[key] = Boolean(queryObj[key]);
+    } else if (key === "productName") {
+      queryObj[key] = new RegExp(`^${queryObj[key]}`, "i");
     }
-      else if(key ==="newInStore"){
-    queryObj[key]= Boolean(queryObj[key])
-  }
-      else if(key === "productName")
-      {queryObj[key] = new RegExp(`^${queryObj[key]}`, "i")}
-
   });
 
   // console.log(queryObj)
 
   // pagination
   const dataCount = await products.countDocuments(queryObj);
+
   const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || dataCount
+  const limit = req.query.limit * 1 || dataCount || 1
   const sort = req?.query?.sort
   let finalSort = {};
-
 
   // Define sorting logic
   if (sort == -1) {
     finalSort = { "price.0.totalPrice": -1 }; // Sort by totalPrice descending
   } else if (sort == 1) {
     finalSort = { "price.0.totalPrice": 1 }; // Sort by totalPrice ascending
-  } else if(sort === "better-discount") {
-    finalSort = { "discount": -1 }; // Sort by discount descending (if no price sort)
-  }else{
-    finalSort = {_id: 1}
+  } else if (sort === "better-discount") {
+    finalSort = { discount: -1 }; // Sort by discount descending (if no pri                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ce sort)
+  } else {
+    finalSort = { _id: 1 };
   }
 
   // Pagination logic
   const skip = (page - 1) * limit;
+
   console.log(queryObj);
   // Aggregate pipeline with dynamic sorting
   const data = await products.aggregate([
@@ -206,6 +206,6 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
 // @desc - get particular product api
 // @route - GET api/v1/product/:id
 export const getParticularProduct = asyncHandler(async (req, res, next) => {
-  const data = await products.findById(req?.params?.id);
+  const data = await products.findOne({ productSlug: req?.params?.id });
   res.status(200).json({ status: true, data });
 });
