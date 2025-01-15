@@ -3,7 +3,6 @@ import errorResponse from "../utils/errorResponse.js";
 import products from "../models/products.js";
 import { cloudinary } from "../config/cloudinary.js";
 import mongoose from "mongoose";
-import chalk from "chalk";
 
 // @desc - new product
 // @route - POST api/v1/product
@@ -65,8 +64,8 @@ export const getAllProducts = asyncHandler(async (req, res, next) => {
   const dataCount = await products.countDocuments(queryObj);
 
   const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || dataCount || 1
-  const sort = req?.query?.sort
+  const limit = req.query.limit * 1 || dataCount || 1;
+  const sort = req?.query?.sort;
   let finalSort = {};
 
   // Define sorting logic

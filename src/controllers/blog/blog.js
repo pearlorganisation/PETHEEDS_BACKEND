@@ -53,11 +53,11 @@ export const deleteBlog = async (req, res) => {
 };
 
 export const updateBlog = async (req, res) => {
-  const banner = req?.file
-// console.log(banner)
+  const banner = req?.file;
+  console.log(req.body);
   let result;
-  if(banner){
-  result = await cloudinary.uploader.upload(banner?.path);
+  if (banner) {
+    result = await cloudinary.uploader.upload(banner?.path);
   }
 
   try {
@@ -71,6 +71,27 @@ export const updateBlog = async (req, res) => {
       return res.status(404).json({ status: false, message: "Blog not found" });
     }
     res.status(200).json({ status: true, message: "Updated successfully!!" });
+  } catch (error) {
+    res.status(400).json({
+      status: false,
+      message: error?.message || "Internal server error",
+    });
+  }
+};
+
+// @desc - get blog by slug
+// @route - GET api/v1/blog/:slug
+
+export const getBlogBySlug = async (req, res) => {
+  const { slug } = req?.params;
+  try {
+    const singleBlog = await blog.findOne({ blogSlug: slug });
+    if (!singleBlog) {
+      return res.status(404).json({ status: false, message: "Blog not found" });
+    }
+    res
+      .status(200)
+      .json({ status: true, message: "Success!!", data: singleBlog });
   } catch (error) {
     res.status(400).json({
       status: false,
