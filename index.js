@@ -74,6 +74,7 @@ import addressRoutes from "./src/routes/address.js";
 import reviewRoutes from "./src/routes/review.js";
 import couponCodeRoutes from "./src/routes/couponCode.js";
 import morgan from "morgan";
+import { CouponRouter } from "./src/routes/coupon.js";
 
 // @@Desc:-----------------route section-----------------
 app.use(morgan("dev"));
@@ -93,6 +94,7 @@ app.use("/api/v1/booking", bookingRoutes);
 app.use("/api/v1/address", addressRoutes);
 app.use("/api/v1/review", reviewRoutes);
 app.use("/api/v1/couponCode", couponCodeRoutes);
+app.use("/api/v1/coupon", CouponRouter);
 app.use(error);
 
 app.use("/", (req, res) => {

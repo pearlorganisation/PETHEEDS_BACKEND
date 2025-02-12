@@ -24,6 +24,10 @@ export const authSchema = new mongoose.Schema(
       type: Number,
       //   required: [true, "Number already exists!!"],
     },
+    welcomeCouponAvailed:{
+      type:Boolean,
+      default:false
+    },
     Address: {
       type: Number,
       //   required: [true, "Number already exists!!"],

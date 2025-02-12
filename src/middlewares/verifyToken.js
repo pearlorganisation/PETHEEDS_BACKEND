@@ -2,7 +2,7 @@ import jsonwebtoken from "jsonwebtoken";
 
 const jwt = jsonwebtoken;
 
-export const verifyTokenMiddleware = async (req, res, next) => {
+export const  verifyTokenMiddleware = async (req, res, next) => {
   try {
     const cookies = req?.cookies;
 

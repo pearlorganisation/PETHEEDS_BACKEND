@@ -3,11 +3,75 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import errorResponse from "../utils/errorResponse.js";
 import { razorpayInstance } from "../config/razorpay.js";
 import crypto from "crypto";
+import { CouponModel } from "../models/coupon.js";
+import auth from "../models/auth.js";
 
 // @desc -creating new order section for razorpay and storing booking data in database
 // @route - POST api/v1/booking/bookingOrder
 
 export const bookingOrder = asyncHandler(async (req, res, next) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    if (req?.body?.coupon) {
+      const couponData = await CouponModel.findById(req.body.coupon).session(session);
+
+      if(couponData.expired)
+      {
+        await session.abortTransaction();
+        session.endSession();
+        return res.status(404).json({ status: false, message: "Coupon Expired !!" }); 
+      }
+      const userData = await auth.findById(req.body.userId).session(session);
+
+      if (!couponData) {
+        await session.abortTransaction();
+        session.endSession();
+        return res.status(404).json({ status: false, message: "Coupon not found!" });
+      }
+
+      if (couponData.totalNumberOfAvailableCoupon === 0) {
+        await session.abortTransaction();
+        session.endSession();
+        return res.status(400).json({ status: false, message: "Coupon is not available!" });
+      }
+
+      if(userData.welcomeCouponAvailed&&couponData.title.startWith('WELCOME') )
+      {
+        return res.status(400).json({ status: false, message: "Coupon is Already Availed Choose Another Coupon !!" });
+
+      }
+      else if((!userData.welcomeCouponAvailed)&&couponData.title.startWith('WELCOME'))
+      {
+        userData.welcomeCouponAvailed = true;
+      }
+
+      if (couponData.totalNumberOfAvailableCoupon === 1) {
+        couponData.totalNumberOfAvailableCoupon = 0;
+        couponData.expired = true;
+      } else {
+        couponData.totalNumberOfAvailableCoupon -= 1;
+      }
+
+      await couponData.save({ session, runValidators: false });
+      await userData.save({session,runValidators:false});
+
+      await session.commitTransaction();
+      session.endSession();
+
+    }
+    else
+    {
+      await session.abortTransaction();
+      session.endSession();
+    }
+
+  } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
+  }
+
   const newBooking = await booking.create({
     amount: req?.body?.amount,
     discount:req?.body?.discount,
@@ -26,6 +90,7 @@ export const bookingOrder = asyncHandler(async (req, res, next) => {
   razorpayInstance.orders
     .create(options)
     .then((order) => {
+
       res.status(200).json({
         success: true,
         order,
