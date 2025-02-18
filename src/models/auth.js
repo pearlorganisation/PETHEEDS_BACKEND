@@ -8,7 +8,13 @@ export const authSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      required: [true, "Email is required!!"],
+      validate:{
+        validator: function (value) {
+          return this.phoneNumber || value; // Ensure at least one of email or phoneNumber is present
+        },
+        message:"Please Provide At Least One Of The Following (Email/Phone Number)"
+      }
+      // required: [true, "Email is required!!"],
 
     },
     role: {
@@ -22,6 +28,12 @@ export const authSchema = new mongoose.Schema(
     },
     phoneNumber: {
       type: Number,
+      validate:{
+        validator: function (value) {
+          return this.email || value; // Ensure at least one of email or phoneNumber is present
+        },
+        message:"Please Provide At Least One Of The Following (Email/Phone Number)"
+      }
       //   required: [true, "Number already exists!!"],
     },
     welcomeCouponAvailed:{

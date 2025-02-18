@@ -10,6 +10,7 @@ const otpSchema = new mongoose.Schema(
       enum:["SIGNUP","FORGOTPASSWORD"]
     },
     email: String,
+    phoneNumber:String,
     expiresAt: {
       type: Date,
       // required:[true,"Expiry Date of otp must be provided"]

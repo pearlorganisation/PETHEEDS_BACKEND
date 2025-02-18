@@ -11,9 +11,9 @@ import {saveAccessTokenToCookie } from "../utils/other.js";
 // @desc -creating new user
 // @route - POST api/v1/auth/signup
 export const signup = asyncHandler(async (req, res, next) => {
-  const {email,password } = req?.body;
+  const {email,password,phoneNumber } = req?.body;
 
-  const isDublicateEmail = await auth.findOne({ email });
+  const isDublicateEmail = await auth.findOne({ $or:[{email},{phoneNumber}] });
   if (isDublicateEmail)
     return next(new errorResponse("User already exists!", 400));
  

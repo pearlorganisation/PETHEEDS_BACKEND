@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import auth from "../models/auth.js";
 import { CouponModel } from "../models/coupon.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -33,20 +34,26 @@ export const createCoupon = asyncHandler(async (req, res) => {
 // Get all coupons
 export const getAllCoupons = asyncHandler(async (req, res) => {
         
-       const {productList} = req.body;
- 
-            
-       const userData = await auth.findOne({_id:req.userId}).lean();
+       const {productList,userId} = req.query;
+         
+       const userData = await auth.findOne({_id:userId}).lean();
 
        if(!userData)
        {
         return res.status(400).json({status:false,message:"User Does Not Exists !!"})
        }
 
-       let query = [];
+       let query = [{$match:{
+        userAvailed: {
+          $not:{
+            $in: [new mongoose.Types.ObjectId(userId)]
+          }
+        },
+      }}];
  
        if(productList)
        {
+
          query.push( {$match:{
             productSpecificList: {
               $in: productList
@@ -154,3 +161,51 @@ export const deleteCoupon = asyncHandler(async (req, res) => {
         res.status(200).json({status:true, message: "Coupon deleted successfully" });
     
 });
+
+
+export const checkCouponAvailability = asyncHandler(async (req,res)=>{
+
+  const {promoCode,cartPrice} = req.query;
+
+ const coupons = await CouponModel.findOne({title:promoCode}).lean();
+
+ if(!coupons)
+{
+  return res.status(400).json({status:false,message:"Coupon Does Not Exists !!"})
+}
+
+res.status(200).json({status:true,message:"Coupon Fetched Successfully !!",data:coupons})
+
+
+})
+
+
+export const applyCoupon = asyncHandler(async (req,res)=>{
+    const {promoCode,userId} = req.body;
+   
+    console.log(req.body)
+    const coupons = await CouponModel.findOne({title:promoCode});
+
+    if(!coupons)
+    {
+      return res.status(400).json({status:false,message:"Coupon Does Not Exists !!"});
+    }
+
+    if(coupons.totalNumberOfAvailableCoupon == 0)
+      return res.status(400).json({status:false,message:"Cannot Avail Coupon !!"});
+
+
+    coupons.userAvailed.push(userId);
+
+    if(coupons.totalNumberOfAvailableCoupon == 1)
+       coupons.expired = true;
+    coupons.totalNumberOfAvailableCoupon -= 1;
+
+
+    await coupons.save({runValidators:false});
+
+    res.status(200).json({status:true,message:"Coupon Availed SuccessFully !!"});
+
+
+
+})

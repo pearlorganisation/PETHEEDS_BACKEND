@@ -21,7 +21,7 @@ const couponSchema = new mongoose.Schema({
     },
     totalNumberOfAvailableCoupon:{
         type:Number,
-        min:[1,"Total Number Of Available Coupon Must be above 1"],
+        min:[0,"Total Number Of Available Coupon Must be above 0"],
         default:1
     },
     minAmountToAvailCoupon:{
